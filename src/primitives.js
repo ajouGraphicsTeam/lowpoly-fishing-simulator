@@ -22,7 +22,9 @@ class PrimitiveBase {
    * this.vertices랑 this.normals를 만들어줘야함
    */
   constructor(etc) {
-    throw new Error("Constructor must be implemented.");
+    if (this.constructor == PrimitiveBase) {
+      throw new Error("Constructor must be implemented.");
+    }
   }
 }
 
@@ -37,6 +39,11 @@ class QuadPrimitive extends PrimitiveBase {
    * @summary 평면의 네 꼭짓점을 받아서 삼각형 2개로 만듦
    */
   constructor(a, b, c, d) {
+    super();
+    const t1 = subtract(b, a);
+    const t2 = subtract(c, b);
+    const normal = vec3(cross(t1, t2));
+
     // 평면의 절반 삼각형
     this.vertices.push(a);
     this.normals.push(normal);
@@ -84,18 +91,20 @@ class BoxPrimitive extends PrimitiveBase {
    * @param {vec3[]} normalsArray 결과를 저장할 배열
    */
   constructor(vertices) {
+    super();
+
     if (!Array.isArray(vertices) || vertices.length !== 8) {
       console.error("There should be 8 vertices for a hexahedron");
       return false;
     }
 
     const vert = vertices;
-    const front = QuadPrimitive(vert[1], vert[0], vert[3], vert[2]);
-    const right = QuadPrimitive(vert[2], vert[3], vert[7], vert[6]);
-    const bottom = QuadPrimitive(vert[3], vert[0], vert[4], vert[7]);
-    const top = QuadPrimitive(vert[6], vert[5], vert[1], vert[2]);
-    const back = QuadPrimitive(vert[4], vert[5], vert[6], vert[7]);
-    const left = QuadPrimitive(vert[5], vert[4], vert[0], vert[1]);
+    const front = new QuadPrimitive(vert[1], vert[0], vert[3], vert[2]);
+    const right = new QuadPrimitive(vert[2], vert[3], vert[7], vert[6]);
+    const bottom = new QuadPrimitive(vert[3], vert[0], vert[4], vert[7]);
+    const top = new QuadPrimitive(vert[6], vert[5], vert[1], vert[2]);
+    const back = new QuadPrimitive(vert[4], vert[5], vert[6], vert[7]);
+    const left = new QuadPrimitive(vert[5], vert[4], vert[0], vert[1]);
 
     this.vertices = this.vertices.concat(
       front.vertices,
