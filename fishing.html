@@ -69,6 +69,10 @@
     <script type="text/javascript" src="src/animation.js"></script>
     <script type="text/javascript" src="src/modelViewMat.js"></script>
     <script type="text/javascript" src="src/lighting.js"></script>
+    <script type="text/javascript" src="src/primitives.js"></script>
+    <script
+      type="text/javascript"
+      src="src/managers/primitiveManager.js"></script>
     <script type="text/javascript" src="fishing.js"></script>
   </head>
 
@@ -365,34 +369,24 @@
 
     <script id="main">
       const canvasManager = new CanvasManager();
-      const sequentialAnimator = new SequentialAnimator(canvasManager);
-
-      // // for test
-      // canvasManager.lineManager.addVertexPair(vec2(-0.5, 0), vec2(0.5, 0));
-      // canvasManager.lineManager.addVertexPair(vec2(0, -0.5), vec2(0, 0.5));
-
-      // J
-      canvasManager.lineManager.addVertexPair(vec2(-0.9, 0.4), vec2(-0.1, 0.4));
-      canvasManager.lineManager.addVertexPair(
-        vec2(-0.4, 0.4),
-        vec2(-0.4, -0.4)
-      );
-      canvasManager.lineManager.addVertexPair(
-        vec2(-0.4, -0.4),
-        vec2(-0.6, -0.4)
-      );
-      canvasManager.lineManager.addVertexPair(
-        vec2(-0.6, -0.4),
-        vec2(-0.7, -0.1)
-      );
-
-      // H
-      canvasManager.lineManager.addVertexPair(vec2(0.1, 0.4), vec2(0.1, -0.4));
-      canvasManager.lineManager.addVertexPair(vec2(0.1, 0), vec2(0.7, 0));
-      canvasManager.lineManager.addVertexPair(vec2(0.7, 0.4), vec2(0.7, -0.4));
-
       canvasManager.modelViewManager.updateModelView();
       canvasManager.render();
+
+      // // for test
+      const primitiveManager = new PrimitiveManager(canvasManager);
+      primitiveManager.addPrimitive(
+        new BoxPrimitive([
+          [0.6749999999999999, 0.4, 0.025],
+          [0.725, 0.4, 0.025],
+          [0.725, -0.4, 0.025],
+          [0.6749999999999999, -0.4, 0.025],
+          [0.6749999999999999, 0.4, -0.025],
+          [0.725, 0.4, -0.025],
+          [0.725, -0.4, -0.025],
+          [0.6749999999999999, -0.4, -0.025],
+        ])
+      );
+      primitiveManager.render();
 
       setConfig = (event) => {
         console.clear();
