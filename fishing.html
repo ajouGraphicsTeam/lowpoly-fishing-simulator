@@ -398,6 +398,7 @@
         canvasManager.lineManager.draw_type = draw_type.value;
 
         canvasManager.render();
+        primitiveManager.render();
       };
 
       setAnim = (event) => {
@@ -451,6 +452,7 @@
 
         canvasManager.modelViewManager.updateModelView();
         canvasManager.render();
+        primitiveManager.render();
       };
 
       resetCamera = () => {
