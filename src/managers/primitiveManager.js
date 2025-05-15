@@ -22,6 +22,7 @@ class PrimitiveManager {
 
   render() {
     this.primitives.map((primitive, index) => {
+      gl.bindBuffer(gl.ARRAY_BUFFER, this.root.vertexBufferId);
       gl.bufferData(
         gl.ARRAY_BUFFER,
         primitive.vertices.flatten(),
