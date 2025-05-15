@@ -136,31 +136,61 @@ class BoxPrimitive extends PrimitiveBase {
 // make CurvedLinePrimitive <- maybe used for fishing line but not necessarily now - can be substituted with Line or Cylinder.
 
 class cylinderPrimitive extends PrimitiveBase {
-  constructor(radius, height, segments) {
-  // constructor(startPoint, endPoint, radius, height, segments) {
+  constructor(startPoint, radius, height, segments) {
     super();
-    // this.startPoint = startPoint;
-    // this.endPoint = endPoint; 
-    // 이 둘의 차이로, 어느 방향으로 얼마나 원기둥을 기울일지 정할 수 있을듯??
+    this.startPoint = startPoint;
     this.radius = radius;
     this.height = height;
-    this.segments = segments;
-    this.vertices = []; // will push vertices here
-    this.normals = []; // will push normals here
-    this.generateVertices(); // make all vertices and normals in this function
+    this.segments = segments; 
+    /* 생각해보니, segment를 base, side로 나누면 안됨!
+    base와 side segment 개수는 무조건 일치해야 하니까.
+    여기 인자들 ||로 default 값 나중에 필요하면 줘도 될듯. */
+    this.generateVertices();
   }
 
-  // using angle functions?
   generateVertices() {
-    // 측면 
+    for (let i = 0; i < this.segments; i++) {
 
-    // 윗면
-    
-    // 아랫면 -> maybe can utilize 윗면
-    
+      // base(bottom)
+      const theta1 = (i / this.segments) * 2 * Math.PI; // 360 degree
+      const theta2 = ((i + 1) / this.segments) * 2 * Math.PI;
+      
+      const x1 = this.radius * Math.cos(theta1);
+      const z1 = this.radius * Math.sin(theta1);
+      const x2 = this.radius * Math.cos(theta2);
+      const z2 = this.radius * Math.sin(theta2);
+
+      this.vertices.push(vec3(this.startPoint[0], this.startPoint[1], this.startPoint[2])); // center
+      this.vertices.push(vec3(this.startPoint[0] + x1, this.startPoint[1], this.startPoint[2] + z1));
+      this.vertices.push(vec3(this.startPoint[0] + x2, this.startPoint[1], this.startPoint[2] + z2));
+      
+      const bottomNormal = vec3(0, -1, 0);
+      this.normals.push(bottomNormal);
+      this.normals.push(bottomNormal);
+      this.normals.push(bottomNormal);
+
+      // top - reused the base code
+      this.vertices.push(vec3(this.startPoint[0], this.startPoint[1] + this.height, this.startPoint[2])); // center
+      this.vertices.push(vec3(this.startPoint[0] + x1, this.startPoint[1] + this.height, this.startPoint[2] + z1));
+      this.vertices.push(vec3(this.startPoint[0] + x2, this.startPoint[1] + this.height, this.startPoint[2] + z2));
+      
+      const topNormal = vec3(0, 1, 0);
+      this.normals.push(topNormal);
+      this.normals.push(topNormal);
+      this.normals.push(topNormal);
+
+      // side
+      // 옆면 한 사각형의 네 꼭짓점 : 왼쪽 위, 오른쪽 위, 오른쪽 아래, 왼쪽 아래 순
+      // 이거 순서 매우 중요함!!! 강의노트에 나온 순서대로 해야 Quad 함수랑 매칭됨.
+      const p1 = vec3(this.startPoint[0] + x1, this.startPoint[1] + this.height, this.startPoint[2] + z1);
+      const p2 = vec3(this.startPoint[0] + x2, this.startPoint[1] + this.height, this.startPoint[2] + z2);
+      const p3 = vec3(this.startPoint[0] + x2, this.startPoint[1], this.startPoint[2] + z2);
+      const p4 = vec3(this.startPoint[0] + x1, this.startPoint[1], this.startPoint[2] + z1);
+      
+      // Quad가 자동으로 vertices와 normals를 만들어 줘서 그대로 concat해 넣으면 됨.
+      const side = new QuadPrimitive(p1, p2, p3, p4);
+      this.vertices = this.vertices.concat(side.vertices);
+      this.normals = this.normals.concat(side.normals);
+    }
   }
-  
-}
-
-class SquarePyramidPrimitive extends PrimitiveBase {
 }
