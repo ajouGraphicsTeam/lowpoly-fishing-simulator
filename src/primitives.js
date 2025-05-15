@@ -15,6 +15,16 @@ class PrimitiveBase {
    */
   normals = [];
 
+  /* 각 object별로 색상 따로 부여하는 코드 초안
+  material = {
+    ambient: vec4(1.0, 0.0, 1.0, 1.0),
+    diffuse: vec4(1.0, 0.8, 0.0, 1.0),
+    specular: vec4(1.0, 0.8, 0.0, 1.0),
+    shininess: 100.0
+  };
+  이후 각 primitive class에서 material을 인자로 받아 this.material = material;와 같이 설정하면 됨.
+  */
+
   /**
    *
    * @param {object} etc primitive 만들때 필요한 내용들 적당히

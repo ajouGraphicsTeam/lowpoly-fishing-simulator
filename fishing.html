@@ -375,6 +375,25 @@
       // // for test
       const primitiveManager = new PrimitiveManager(canvasManager);
 
+      /* 각 object별로 색상 따로 부여하는 코드 초안
+      const redMaterial = {
+        ambient: vec4(0.2, 0.0, 0.0, 1.0),
+        diffuse: vec4(1.0, 0.0, 0.0, 1.0),
+        specular: vec4(1.0, 0.0, 0.0, 1.0),
+        shininess: 100.0
+      };
+
+      const blueMaterial = {
+        ambient: vec4(0.0, 0.0, 0.2, 1.0),
+        diffuse: vec4(0.0, 0.0, 1.0, 1.0),
+        specular: vec4(0.0, 0.0, 1.0, 1.0),
+        shininess: 100.0
+      };
+
+      primitiveManager.addPrimitive(new BoxPrimitive(vertices, redMaterial));
+      primitiveManager.addPrimitive(new PrismPrimitive(startPoint, radius, height, segments, blueMaterial));
+      */
+
       primitiveManager.addPrimitive(
         new BoxPrimitive([
           [0.6749999999999999, 0.4, 0.025],
