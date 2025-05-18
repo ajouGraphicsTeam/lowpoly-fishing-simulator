@@ -7,9 +7,6 @@ class CanvasManager {
    */
   constructor(canvasId) {
     this.init(canvasId);
-
-    this.lineManager = new LineManager(this);
-    this.modelViewManager = new ModelViewManager(this);
   }
 
   /**
@@ -77,16 +74,6 @@ class CanvasManager {
 
   render() {
     gl.clear(gl.COLOR_BUFFER_BIT);
-
-    console.log(
-      `zigzag: ${this.zigzag}\n` +
-        `thickness: ${this.thickness}\n` +
-        `division: ${this.division}\n` +
-        `draw_type: ${this.draw_type}\n` +
-        `max_length_to_draw: ${this.max_length_to_draw}\n`
-    );
-
-    console.log(" - lines");
-    this.lineManager.drawVertices();
+    // TODO: rootHierarchy를 두고 drawRecursively()
   }
 }
