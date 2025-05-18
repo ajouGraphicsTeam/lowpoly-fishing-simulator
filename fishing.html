@@ -12,6 +12,7 @@
       attribute vec3 aVertexNormal;
       varying vec4 fColor;
 
+      uniform mat4 uModelMat;
       uniform mat4 uModelViewMat;
       uniform mat4 uProjectionMat;
 
@@ -20,7 +21,7 @@
       uniform float shininess;
 
       void main() {
-        vec3 pos = (uModelViewMat * aVertexPosition).xyz;
+        vec3 pos = (uModelViewMat * uModelMat * aVertexPosition).xyz;
 
         //fixed light position
         vec3 light = lightPosition.xyz;
@@ -49,7 +50,7 @@
 
 
         gl_PointSize = 5.0;
-        gl_Position = uProjectionMat * uModelViewMat * aVertexPosition;
+        gl_Position = uProjectionMat * uModelViewMat * uModelMat * aVertexPosition;
       }
     </script>
 
@@ -65,6 +66,8 @@
     <script type="text/javascript" src="Common/initShaders.js"></script>
     <script type="text/javascript" src="Common/MV.js"></script>
 
+    <script type="text/javascript" src="src/models/transform.js"></script>
+    <script type="text/javascript" src="src/models/camera.js"></script>
     <script type="text/javascript" src="src/prototypes.js"></script>
     <script type="text/javascript" src="src/animation.js"></script>
     <script type="text/javascript" src="src/modelViewMat.js"></script>
@@ -77,6 +80,9 @@
     <script
       type="text/javascript"
       src="src/managers/animationManager.js"></script>
+    <script
+      type="text/javascript"
+      src="src/managers/hierarchyManager.js"></script>
     <script type="text/javascript" src="src/managers/canvasManager.js"></script>
     <script type="text/javascript" src="src/managers/rootManager.js"></script>
 
@@ -375,26 +381,51 @@
     </div>
 
     <script id="main">
-      const canvasManager = new CanvasManager();
+      const rootManager = new RootManager();
+      const canvasManager = rootManager.canvasManager;
       canvasManager.modelViewManager.updateModelView();
       canvasManager.render();
 
       // // for test
-      const primitiveManager = new PrimitiveManager(canvasManager);
-      primitiveManager.addPrimitive(
-        new BoxPrimitive([
-          [0.6749999999999999, 0.4, 0.025],
-          [0.725, 0.4, 0.025],
-          [0.725, -0.4, 0.025],
-          [0.6749999999999999, -0.4, 0.025],
-          [0.6749999999999999, 0.4, -0.025],
-          [0.725, 0.4, -0.025],
-          [0.725, -0.4, -0.025],
-          [0.6749999999999999, -0.4, -0.025],
-        ])
-      );
-      primitiveManager.render();
+      const box = new BoxPrimitive([
+        [0, 0.4, 0.025],
+        [0.1, 0.4, 0.025],
+        [0.1, -0.4, 0.025],
+        [0, -0.4, 0.025],
+        [0, 0.4, -0.025],
+        [0.1, 0.4, -0.025],
+        [0.1, -0.4, -0.025],
+        [0, -0.4, -0.025],
+      ]);
+      const box2 = new BoxPrimitive([
+        [0.1, 0.4, 0.025],
+        [0.2, 0.4, 0.025],
+        [0.2, -0.4, 0.025],
+        [0.1, -0.4, 0.025],
+        [0.1, 0.4, -0.025],
+        [0.2, 0.4, -0.025],
+        [0.2, -0.4, -0.025],
+        [0.1, -0.4, -0.025],
+      ]);
+      const hierarchyManager = new HierarchyManager();
+      const child = new HierarchyManager();
+      const child2 = new HierarchyManager();
 
+      hierarchyManager.children.push(child);
+      child.children.push(child2);
+
+      hierarchyManager.primitives = [box];
+      child.primitives = [box, box2];
+      child2.primitives = [box];
+
+      hierarchyManager.transform.position = vec3(0.1, 0.1, 0);
+      child.transform.rotation = vec3(0, 0, -30);
+      child2.transform.anchor = vec3(0, 0.4, 0);
+      child2.transform.rotation = vec3(0, 0, 120);
+
+      hierarchyManager.drawRecursively();
+
+      /////////
       setConfig = (event) => {
         console.clear();
 

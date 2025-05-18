@@ -68,9 +68,6 @@ function calcModelViewMat({
 
 function rotateMat(rotateDeg, fixedPoint = null) {
   const [degX, degY, degZ] = rotateDeg;
-  const thetaX = radians(degX);
-  const thetaY = radians(degY);
-  const thetaZ = radians(degZ);
 
   if (fixedPoint) {
     var fixedPointRotateMat = translate(fixedPoint);
@@ -87,9 +84,9 @@ function rotateMat(rotateDeg, fixedPoint = null) {
     return fixedPointRotateMat;
   }
 
-  var rotateMat = rotateX(thetaX);
-  rotateMat = mult(modelViewMatrix, rotateY(thetaY));
-  rotateMat = mult(modelViewMatrix, rotateZ(thetaZ));
+  var rotateMat = rotateX(degX);
+  rotateMat = mult(rotateMat, rotateY(degY));
+  rotateMat = mult(rotateMat, rotateZ(degZ));
 
   return rotateMat;
 }

@@ -1,6 +1,12 @@
-const rootManager = {
-  animationManager: new AnimationManager(),
-  canvasManager: new CanvasManager("gl-canvas"),
-};
+class RootManager {
+  constructor() {
+    if (RootManager.instance) {
+      return RootManager.instance;
+    }
 
-Object.freeze(rootManager); // 변경 불가능하게 만들어 안정성 확보
+    this.animationManager = new AnimationManager();
+    this.canvasManager = new CanvasManager("gl-canvas");
+
+    RootManager.instance = this;
+  }
+}
