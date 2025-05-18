@@ -53,15 +53,15 @@ class CanvasManager {
     gl.vertexAttribPointer(vPosition, 3, gl.FLOAT, false, 0, 0);
     gl.enableVertexAttribArray(vPosition);
 
-    // init modelViewMatrix  // TODO: change to camera mat
-    const modelViewMat = mat4(); // 4x4 identity matrix
-    const modelViewMatLoc = gl.getUniformLocation(this.program, "uModelMat");
-    gl.uniformMatrix4fv(modelViewMatLoc, false, flatten(modelViewMat));
+    // init viewMat (cameraMat
+    const viewMat = mat4(); // 4x4 identity matrix
+    this.viewMatLoc = gl.getUniformLocation(this.program, "uViewMat");
+    gl.uniformMatrix4fv(this.viewMatLoc, false, flatten(viewMat));
 
     // init modelViewMatrix
     const modelMat = mat4(); // 4x4 identity matrix
-    const modelMatLoc = gl.getUniformLocation(this.program, "uModelViewMat");
-    gl.uniformMatrix4fv(modelMatLoc, false, flatten(modelMat));
+    this.modelMatLoc = gl.getUniformLocation(this.program, "uModelMat");
+    gl.uniformMatrix4fv(this.modelMatLoc, false, flatten(modelMat));
 
     // init projectionMatrix
     const [fovy, aspect, near, far] = [120, 1, 0.1, 10];

@@ -13,7 +13,7 @@
       varying vec4 fColor;
 
       uniform mat4 uModelMat;
-      uniform mat4 uModelViewMat;
+      uniform mat4 uViewMat;
       uniform mat4 uProjectionMat;
 
       uniform vec4 ambientProduct, diffuseProduct, specularProduct;
@@ -21,7 +21,7 @@
       uniform float shininess;
 
       void main() {
-        vec3 pos = (uModelViewMat * uModelMat * aVertexPosition).xyz;
+        vec3 pos = (uViewMat * uModelMat * aVertexPosition).xyz;
 
         //fixed light position
         vec3 light = lightPosition.xyz;
@@ -31,7 +31,7 @@
         vec4 NN = vec4(aVertexNormal, 0);
 
         // Transform vertex normal into eye coordinates
-        vec3 N = normalize( (uModelViewMat * NN).xyz );
+        vec3 N = normalize( (uViewMat * uModelMat * NN).xyz );
 
         // Compute terms in the illumination equation
         vec4 ambient = ambientProduct;
@@ -50,7 +50,7 @@
 
 
         gl_PointSize = 5.0;
-        gl_Position = uProjectionMat * uModelViewMat * uModelMat * aVertexPosition;
+        gl_Position = uProjectionMat * uViewMat * uModelMat * aVertexPosition;
       }
     </script>
 
@@ -74,6 +74,7 @@
     <script type="text/javascript" src="src/lighting.js"></script>
     <script type="text/javascript" src="src/primitives.js"></script>
 
+    <script type="text/javascript" src="src/managers/rootManager.js"></script>
     <script
       type="text/javascript"
       src="src/managers/primitiveManager.js"></script>
@@ -84,7 +85,7 @@
       type="text/javascript"
       src="src/managers/hierarchyManager.js"></script>
     <script type="text/javascript" src="src/managers/canvasManager.js"></script>
-    <script type="text/javascript" src="src/managers/rootManager.js"></script>
+    <script type="text/javascript" src="src/managers/cameraManager.js"></script>
 
     <script type="text/javascript" src="fishing.js"></script>
   </head>
@@ -214,9 +215,7 @@
 
     <script id="main">
       const rootManager = new RootManager();
-      const canvasManager = rootManager.canvasManager;
-      canvasManager.modelViewManager.updateModelView();
-      canvasManager.render();
+      rootManager.init();
 
       // // for test
       const box = new BoxPrimitive([

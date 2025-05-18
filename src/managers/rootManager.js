@@ -3,10 +3,12 @@ class RootManager {
     if (RootManager.instance) {
       return RootManager.instance;
     }
+    RootManager.instance = this;
+  }
 
+  init() {
     this.animationManager = new AnimationManager();
     this.canvasManager = new CanvasManager("gl-canvas");
-
-    RootManager.instance = this;
+    this.cameraManager = new CameraManager();
   }
 }
