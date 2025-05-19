@@ -96,30 +96,14 @@
 
       <div>
         <div id="panel" class="flex flex-col gap-2">
-          <div class="camera">
-            <p>camera:</p>
+          <div class="light">
+            <p>light position:</p>
 
-            <div class="flex gap-4">
-              <label class="ml-4">- preset</label>
-              <div>
-                <button id="frontCamera" type="button" class="border px-1">
-                  front
-                </button>
-                <button id="sideCamera" type="button" class="border px-1">
-                  side
-                </button>
-                <button id="topCamera" type="button" class="border px-1">
-                  top
-                </button>
-              </div>
-            </div>
-
-            <label class="ml-4">- eye</label>
             <div class="ml-7">
               <div class="my-1">
                 <label>X: </label>
                 <input
-                  id="eye_x"
+                  id="light_x"
                   type="number"
                   value="0"
                   step="0.01"
@@ -128,7 +112,7 @@
               <div class="my-1">
                 <label>Y: </label>
                 <input
-                  id="eye_y"
+                  id="light_y"
                   type="number"
                   value="0"
                   step="0.01"
@@ -137,7 +121,7 @@
               <div class="my-1">
                 <label>Z: </label>
                 <input
-                  id="eye_z"
+                  id="light_z"
                   type="number"
                   value="1"
                   step="0.01"
@@ -145,211 +129,278 @@
               </div>
             </div>
 
-            <label class="ml-4">- at</label>
-            <div class="ml-7">
-              <div class="my-1">
-                <label>X: </label>
-                <input
-                  id="at_x"
-                  type="number"
-                  value="0"
-                  step="0.01"
-                  class="border pl-1" />
-              </div>
-              <div class="my-1">
-                <label>Y: </label>
-                <input
-                  id="at_y"
-                  type="number"
-                  value="0"
-                  step="0.01"
-                  class="border pl-1" />
-              </div>
-              <div class="my-1">
-                <label>Z: </label>
-                <input
-                  id="at_z"
-                  type="number"
-                  value="0"
-                  step="0.01"
-                  class="border pl-1" />
-              </div>
-            </div>
+            <div class="camera">
+              <p>camera:</p>
 
-            <label class="ml-4">- up</label>
-            <div class="ml-7">
-              <div class="my-1">
-                <label>X: </label>
-                <input
-                  id="up_x"
-                  type="number"
-                  value="0"
-                  step="1"
-                  class="border pl-1" />
+              <div class="flex gap-4">
+                <label class="ml-4">- preset</label>
+                <div>
+                  <button id="frontCamera" type="button" class="border px-1">
+                    front
+                  </button>
+                  <button id="sideCamera" type="button" class="border px-1">
+                    side
+                  </button>
+                  <button id="topCamera" type="button" class="border px-1">
+                    top
+                  </button>
+                </div>
               </div>
-              <div class="my-1">
-                <label>Y: </label>
-                <input
-                  id="up_y"
-                  type="number"
-                  value="1"
-                  step="1"
-                  class="border pl-1" />
+
+              <label class="ml-4">- eye</label>
+              <div class="ml-7">
+                <div class="my-1">
+                  <label>X: </label>
+                  <input
+                    id="eye_x"
+                    type="number"
+                    value="0"
+                    step="0.01"
+                    class="border pl-1" />
+                </div>
+                <div class="my-1">
+                  <label>Y: </label>
+                  <input
+                    id="eye_y"
+                    type="number"
+                    value="0"
+                    step="0.01"
+                    class="border pl-1" />
+                </div>
+                <div class="my-1">
+                  <label>Z: </label>
+                  <input
+                    id="eye_z"
+                    type="number"
+                    value="1"
+                    step="0.01"
+                    class="border pl-1" />
+                </div>
               </div>
-              <div class="my-1">
-                <label>Z: </label>
-                <input
-                  id="up_z"
-                  type="number"
-                  value="0"
-                  step="1"
-                  class="border pl-1" />
+
+              <label class="ml-4">- at</label>
+              <div class="ml-7">
+                <div class="my-1">
+                  <label>X: </label>
+                  <input
+                    id="at_x"
+                    type="number"
+                    value="0"
+                    step="0.01"
+                    class="border pl-1" />
+                </div>
+                <div class="my-1">
+                  <label>Y: </label>
+                  <input
+                    id="at_y"
+                    type="number"
+                    value="0"
+                    step="0.01"
+                    class="border pl-1" />
+                </div>
+                <div class="my-1">
+                  <label>Z: </label>
+                  <input
+                    id="at_z"
+                    type="number"
+                    value="0"
+                    step="0.01"
+                    class="border pl-1" />
+                </div>
+              </div>
+
+              <label class="ml-4">- up</label>
+              <div class="ml-7">
+                <div class="my-1">
+                  <label>X: </label>
+                  <input
+                    id="up_x"
+                    type="number"
+                    value="0"
+                    step="1"
+                    class="border pl-1" />
+                </div>
+                <div class="my-1">
+                  <label>Y: </label>
+                  <input
+                    id="up_y"
+                    type="number"
+                    value="1"
+                    step="1"
+                    class="border pl-1" />
+                </div>
+                <div class="my-1">
+                  <label>Z: </label>
+                  <input
+                    id="up_z"
+                    type="number"
+                    value="0"
+                    step="1"
+                    class="border pl-1" />
+                </div>
               </div>
             </div>
           </div>
         </div>
       </div>
-    </div>
 
-    <script id="main">
-      const rootManager = new RootManager();
-      rootManager.init();
+      <script id="main">
+        const rootManager = new RootManager();
+        rootManager.init();
 
-      rootManager.rootObject.children["robotArm"] = new RobotArm(
-        new Transform({
-          position: vec3(0, -0.8, 0),
-          rotation: vec3(0, 0, -30),
-        })
-      );
-
-      setCanvas = (event) => {
-        console.clear();
-
-        rootManager.cameraManager.eye = vec3(
-          parseFloat(eye_x.value),
-          parseFloat(eye_y.value),
-          parseFloat(eye_z.value)
+        rootManager.rootObject.children["robotArm"] = new RobotArm(
+          new Transform({
+            position: vec3(0, -0.8, 0),
+            rotation: vec3(0, 0, -30),
+          })
         );
-        rootManager.cameraManager.at = vec3(
-          parseFloat(at_x.value),
-          parseFloat(at_y.value),
-          parseFloat(at_z.value)
-        );
-        rootManager.cameraManager.up = vec3(
-          parseFloat(up_x.value),
-          parseFloat(up_y.value),
-          parseFloat(up_z.value)
-        );
-
         rootManager.canvasManager.render();
-      };
-      setCanvas();
 
-      document
-        .querySelectorAll(
-          "#eye_x, #eye_y, #eye_z, #at_x, #at_y, #at_z, #up_x, #up_y, #up_z"
-        )
-        .forEach((input) => {
-          input.addEventListener("input", setCanvas);
+        setLight = (event) => {
+          // console.clear();
+
+          rootManager.canvasManager.lightPosition = vec4(
+            parseFloat(light_x.value),
+            parseFloat(light_y.value),
+            parseFloat(light_z.value)
+          );
+          rootManager.canvasManager.lightingSync();
+          rootManager.canvasManager.render();
+        };
+
+        setCanvas = (event) => {
+          // console.clear();
+
+          rootManager.cameraManager.eye = vec3(
+            parseFloat(eye_x.value),
+            parseFloat(eye_y.value),
+            parseFloat(eye_z.value)
+          );
+          rootManager.cameraManager.at = vec3(
+            parseFloat(at_x.value),
+            parseFloat(at_y.value),
+            parseFloat(at_z.value)
+          );
+          rootManager.cameraManager.up = vec3(
+            parseFloat(up_x.value),
+            parseFloat(up_y.value),
+            parseFloat(up_z.value)
+          );
+
+          rootManager.canvasManager.render();
+        };
+
+        document
+          .querySelectorAll("#light_x, #light_y, #light_z")
+          .forEach((input) => {
+            input.addEventListener("input", setLight);
+          });
+        document
+          .querySelectorAll(
+            "#eye_x, #eye_y, #eye_z, #at_x, #at_y, #at_z, #up_x, #up_y, #up_z"
+          )
+          .forEach((input) => {
+            input.addEventListener("input", setCanvas);
+          });
+
+        resetCamera = () => {
+          eye_x.value = 0;
+          eye_y.value = 0;
+          eye_z.value = 1;
+          at_x.value = 0;
+          at_y.value = 0;
+          at_z.value = 0;
+          up_x.value = 0;
+          up_y.value = 1;
+          up_z.value = 0;
+        };
+
+        frontCamera.addEventListener("click", (event) => {
+          resetCamera();
+
+          setCanvas();
         });
+        sideCamera.addEventListener("click", (event) => {
+          resetCamera();
 
-      resetCamera = () => {
-        eye_x.value = 0;
-        eye_y.value = 0;
-        eye_z.value = 1;
-        at_x.value = 0;
-        at_y.value = 0;
-        at_z.value = 0;
-        up_x.value = 0;
-        up_y.value = 1;
-        up_z.value = 0;
-      };
+          eye_x.value = 1;
+          eye_y.value = 0;
+          eye_z.value = 0;
 
-      frontCamera.addEventListener("click", (event) => {
-        resetCamera();
+          setCanvas();
+        });
+        topCamera.addEventListener("click", (event) => {
+          resetCamera();
 
-        setCanvas();
-      });
-      sideCamera.addEventListener("click", (event) => {
-        resetCamera();
+          eye_x.value = 0;
+          eye_y.value = 1;
+          eye_z.value = 0;
 
-        eye_x.value = 1;
-        eye_y.value = 0;
-        eye_z.value = 0;
+          up_x.value = 0;
+          up_y.value = 0;
+          up_z.value = -1;
 
-        setCanvas();
-      });
-      topCamera.addEventListener("click", (event) => {
-        resetCamera();
+          setCanvas();
+        });
+      </script>
 
-        eye_x.value = 0;
-        eye_y.value = 1;
-        eye_z.value = 0;
+      <script id="mouse">
+        let prevMouseX = 0;
+        let prevMouseY = 0;
 
-        up_x.value = 0;
-        up_y.value = 0;
-        up_z.value = -1;
+        // 마우스가 움직일 때마다 호출
+        function moveCameraByMouse(e) {
+          const dx = e.clientX - prevMouseX;
+          const dy = e.clientY - prevMouseY;
 
-        setCanvas();
-      });
-    </script>
+          // Debouncing, 마우스가 움직인 거리가 10 이하면 무시
+          // 랜더링은 리소스를 많이 쓰므로
+          if (dx * dx + dy * dy < 100) {
+            return;
+          }
 
-    <script id="mouse">
-      let prevMouseX = 0;
-      let prevMouseY = 0;
+          prevMouseX = e.clientX;
+          prevMouseY = e.clientY;
 
-      // 마우스가 움직일 때마다 호출
-      function moveCameraByMouse(e) {
-        const dx = e.clientX - prevMouseX;
-        const dy = e.clientY - prevMouseY;
+          rootManager.cameraManager.moveCamera(vec3(-dx / 500, dy / 500, 0));
 
-        // Debouncing, 마우스가 움직인 거리가 10 이하면 무시
-        // 랜더링은 리소스를 많이 쓰므로
-        if (dx * dx + dy * dy < 100) {
-          return;
+          // control panel과 동기화
+          eye_x.value = rootManager.cameraManager.eye.X;
+          eye_y.value = rootManager.cameraManager.eye.Y;
+          eye_z.value = rootManager.cameraManager.eye.Z;
+
+          at_x.value = rootManager.cameraManager.at.X;
+          at_y.value = rootManager.cameraManager.at.Y;
+          at_z.value = rootManager.cameraManager.at.Z;
+          setCanvas();
         }
 
-        prevMouseX = e.clientX;
-        prevMouseY = e.clientY;
-
-        rootManager.cameraManager.moveCamera(vec3(-dx / 500, dy / 500, 0));
-
-        // control panel과 동기화
-        eye_x.value = rootManager.cameraManager.eye.X;
-        eye_y.value = rootManager.cameraManager.eye.Y;
-        eye_z.value = rootManager.cameraManager.eye.Z;
-
-        at_x.value = rootManager.cameraManager.at.X;
-        at_y.value = rootManager.cameraManager.at.Y;
-        at_z.value = rootManager.cameraManager.at.Z;
-        setCanvas();
-      }
-
-      // 마우스 버튼을 놓으면, moveCameraByMouse 제거
-      function handleMouseUp(e) {
-        if (e.button === 0) {
-          // 왼쪽 마우스 버튼일 경우
-          document.removeEventListener("mousemove", moveCameraByMouse);
-          document.removeEventListener("mouseup", handleMouseUp);
+        // 마우스 버튼을 놓으면, moveCameraByMouse 제거
+        function handleMouseUp(e) {
+          if (e.button === 0) {
+            // 왼쪽 마우스 버튼일 경우
+            document.removeEventListener("mousemove", moveCameraByMouse);
+            document.removeEventListener("mouseup", handleMouseUp);
+          }
         }
-      }
 
-      // 마우스 버튼이 눌리면 moveCameraByMouse 추가
-      function handleMouseDown(e) {
-        prevMouseX = e.clientX;
-        prevMouseY = e.clientY;
+        // 마우스 버튼이 눌리면 moveCameraByMouse 추가
+        function handleMouseDown(e) {
+          prevMouseX = e.clientX;
+          prevMouseY = e.clientY;
 
-        if (e.button === 0) {
-          // 왼쪽 마우스 버튼일 경우
-          document.addEventListener("mousemove", moveCameraByMouse);
-          document.addEventListener("mouseup", handleMouseUp);
+          if (e.button === 0) {
+            // 왼쪽 마우스 버튼일 경우
+            document.addEventListener("mousemove", moveCameraByMouse);
+            document.addEventListener("mouseup", handleMouseUp);
+          }
         }
-      }
 
-      // 초기에는 mousedown 리스너만
-      document
-        .getElementById("gl-canvas")
-        .addEventListener("mousedown", handleMouseDown);
-    </script>
+        // 초기에는 mousedown 리스너만
+        document
+          .getElementById("gl-canvas")
+          .addEventListener("mousedown", handleMouseDown);
+      </script>
+    </div>
   </body>
 </html>
