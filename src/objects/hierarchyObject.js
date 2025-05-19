@@ -12,11 +12,11 @@ class HierarchyObject {
   children = {};
 
   /**
-   * @type {mat4}
-   * 현재의 좌표계에서 parent의 좌표계로 가는 행렬
+   * @type {Transform}
+   * Transform Component
    */
 
-  transform = new Transform();
+  transform;
 
   /**
    * @type {PrimitiveBase}
@@ -34,8 +34,9 @@ class HierarchyObject {
     this._mergePrimitives();
   }
 
-  constructor(primitives = []) {
+  constructor(primitives, transform = new Transform()) {
     this.primitives = primitives;
+    this.transform = transform;
   }
 
   _mergePrimitives() {

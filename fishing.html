@@ -215,40 +215,13 @@
       const rootManager = new RootManager();
       rootManager.init();
 
-      // // for test
-      const box = new BoxPrimitive([
-        [0, 0.4, 0.025],
-        [0.1, 0.4, 0.025],
-        [0.1, -0.4, 0.025],
-        [0, -0.4, 0.025],
-        [0, 0.4, -0.025],
-        [0.1, 0.4, -0.025],
-        [0.1, -0.4, -0.025],
-        [0, -0.4, -0.025],
-      ]);
-      const box2 = new BoxPrimitive([
-        [0.1, 0.4, 0.025],
-        [0.2, 0.4, 0.025],
-        [0.2, -0.4, 0.025],
-        [0.1, -0.4, 0.025],
-        [0.1, 0.4, -0.025],
-        [0.2, 0.4, -0.025],
-        [0.2, -0.4, -0.025],
-        [0.1, -0.4, -0.025],
-      ]);
-      const hierarchyObject = new HierarchyObject([box]);
-      const child = new HierarchyObject([box, box2]);
-      const child2 = new HierarchyObject([box]);
-
-      hierarchyObject.children["child"] = child;
-      child.children["child2"] = child2;
-
-      hierarchyObject.transform.position = vec3(0.1, 0.1, 0);
-      child.transform.rotation = vec3(0, 0, -30);
-      child2.transform.anchor = vec3(0, 0.4, 0);
-      child2.transform.rotation = vec3(0, 0, 120);
-
-      hierarchyObject.drawRecursively();
+      const robotArm = new RobotArm(
+        new Transform({
+          position: vec3(0, -0.8, 0),
+          rotation: vec3(0, 0, -30),
+        })
+      );
+      robotArm.drawRecursively();
 
       resetCamera = () => {
         eye_x.value = 0;
