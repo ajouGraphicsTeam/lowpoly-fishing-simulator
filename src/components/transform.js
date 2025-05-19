@@ -48,6 +48,23 @@ class Transform {
     this._syncMatrix();
   }
 
+  /**
+   *
+   * @param {Object} param
+   * @param {vec3} param.position
+   * @param {vec3} param.rotation
+   * @param {vec3} param.scale
+   * @param {vec3 | null} param.anchor
+   */
+  constructor({ position, rotation, scale, anchor } = {}) {
+    if (position) {
+      this.anchor = this.position = position;
+    }
+    if (rotation) this.rotation = rotation;
+    if (scale) this.scale = scale;
+    if (anchor) this.anchor = anchor;
+  }
+
   _syncMatrix() {
     var newModelMat = mat4();
 
