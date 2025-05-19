@@ -5,9 +5,11 @@ class HierarchyObject {
   parent;
 
   /**
-   * @type {HierarchyObject[]}
+   * <name, HierarchyObject>
+   *
+   * @type {{string: HierarchyObject}}
    */
-  children = [];
+  children = {};
 
   /**
    * @type {mat4}
@@ -32,6 +34,10 @@ class HierarchyObject {
     this._mergePrimitives();
   }
 
+  constructor(primitives = []) {
+    this.primitives = primitives;
+  }
+
   _mergePrimitives() {
     this._mergedVertices = this._primitives.flatMap(
       (primitive) => primitive.vertices
@@ -49,7 +55,9 @@ class HierarchyObject {
     this.draw(parentsFrameMat);
     const frameMat = mult(parentsFrameMat, this.transform.modelMat);
 
-    this.children.forEach((child, idx) => child.drawRecursively(frameMat));
+    Object.values(this.children).forEach((child) =>
+      child.drawRecursively(frameMat)
+    );
   }
 
   /**

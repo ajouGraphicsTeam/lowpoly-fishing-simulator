@@ -75,7 +75,7 @@
     <script
       type="text/javascript"
       src="src/objects/hierarchyObject.js"></script>
-
+    <script type="text/javascript" src="src/objects/prefabObject.js"></script>
     <script type="text/javascript" src="src/managers/rootManager.js"></script>
     <script
       type="text/javascript"
@@ -84,6 +84,8 @@
     <script type="text/javascript" src="src/managers/cameraManager.js"></script>
 
     <script type="text/javascript" src="fishing.js"></script>
+
+    <script type="text/javascript" src="src/data/prefabs/robotArm.js"></script>
   </head>
 
   <body>
@@ -234,16 +236,12 @@
         [0.2, -0.4, -0.025],
         [0.1, -0.4, -0.025],
       ]);
-      const hierarchyObject = new HierarchyObject();
-      const child = new HierarchyObject();
-      const child2 = new HierarchyObject();
+      const hierarchyObject = new HierarchyObject([box]);
+      const child = new HierarchyObject([box, box2]);
+      const child2 = new HierarchyObject([box]);
 
-      hierarchyObject.children.push(child);
-      child.children.push(child2);
-
-      hierarchyObject.primitives = [box];
-      child.primitives = [box, box2];
-      child2.primitives = [box];
+      hierarchyObject.children["child"] = child;
+      child.children["child2"] = child2;
 
       hierarchyObject.transform.position = vec3(0.1, 0.1, 0);
       child.transform.rotation = vec3(0, 0, -30);
