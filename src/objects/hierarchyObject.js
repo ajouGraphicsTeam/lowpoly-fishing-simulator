@@ -1,11 +1,11 @@
-class HierarchyManager {
+class HierarchyObject {
   /**
-   * @type {HierarchyManager}
+   * @type {HierarchyObject}
    */
   parent;
 
   /**
-   * @type {HierarchyManager[]}
+   * @type {HierarchyObject[]}
    */
   children = [];
 

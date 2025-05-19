@@ -26,7 +26,7 @@ classDiagram
         +resize()
         +getRenderingContext()
     }
-    class HierarchyManager {
+    class HierarchyObject {
         +addLocalSpace(localSpace)
         +removeLocalSpace(localSpace)
         +updateTransforms()
@@ -60,8 +60,8 @@ classDiagram
         +getTransformedVertices(transform: Matrix4): Float32Array
     }
 
-    CanvasManager --o HierarchyManager : manages
-    HierarchyManager --o LocalSpaceManager : manages*
+    CanvasManager --o HierarchyObject : manages
+    HierarchyObject --o LocalSpaceManager : manages*
     LocalSpaceManager --o Prefab : manages*
     LocalSpaceManager --o AnimationManager : has
     Prefab --o Primitive : has*
@@ -69,7 +69,7 @@ classDiagram
 
 ```mermaid
 graph TD
-    A("CanvasManager.draw()") --> B{"HierarchyManager.traverse()"};
+    A("CanvasManager.draw()") --> B{"HierarchyObject.traverse()"};
     B -- Visit LocalSpaceManager --> C["LocalSpaceManager.update()"];
     C -- Update Animation --> D("AnimationManager.update(deltaTime)");
     D -- Apply Animation Transform to Prefabs --> E["LocalSpaceManager.traversePrefabs()"];

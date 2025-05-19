@@ -67,19 +67,19 @@
     <script type="text/javascript" src="Common/MV.js"></script>
 
     <script type="text/javascript" src="src/constants.js"></script>
-    <script type="text/javascript" src="src/components/transform.js"></script>
     <script type="text/javascript" src="src/prototypes.js"></script>
     <script type="text/javascript" src="src/animation.js"></script>
     <script type="text/javascript" src="src/modelViewMat.js"></script>
+    <script type="text/javascript" src="src/components/transform.js"></script>
     <script type="text/javascript" src="src/components/primitives.js"></script>
+    <script
+      type="text/javascript"
+      src="src/objects/hierarchyObject.js"></script>
 
     <script type="text/javascript" src="src/managers/rootManager.js"></script>
     <script
       type="text/javascript"
       src="src/managers/animationManager.js"></script>
-    <script
-      type="text/javascript"
-      src="src/managers/hierarchyManager.js"></script>
     <script type="text/javascript" src="src/managers/canvasManager.js"></script>
     <script type="text/javascript" src="src/managers/cameraManager.js"></script>
 
@@ -234,23 +234,23 @@
         [0.2, -0.4, -0.025],
         [0.1, -0.4, -0.025],
       ]);
-      const hierarchyManager = new HierarchyManager();
-      const child = new HierarchyManager();
-      const child2 = new HierarchyManager();
+      const hierarchyObject = new HierarchyObject();
+      const child = new HierarchyObject();
+      const child2 = new HierarchyObject();
 
-      hierarchyManager.children.push(child);
+      hierarchyObject.children.push(child);
       child.children.push(child2);
 
-      hierarchyManager.primitives = [box];
+      hierarchyObject.primitives = [box];
       child.primitives = [box, box2];
       child2.primitives = [box];
 
-      hierarchyManager.transform.position = vec3(0.1, 0.1, 0);
+      hierarchyObject.transform.position = vec3(0.1, 0.1, 0);
       child.transform.rotation = vec3(0, 0, -30);
       child2.transform.anchor = vec3(0, 0.4, 0);
       child2.transform.rotation = vec3(0, 0, 120);
 
-      hierarchyManager.drawRecursively();
+      hierarchyObject.drawRecursively();
 
       resetCamera = () => {
         eye_x.value = 0;
