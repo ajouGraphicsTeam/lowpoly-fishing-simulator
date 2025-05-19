@@ -9,6 +9,14 @@ class CanvasManager {
     this.init(canvasId);
   }
 
+  render() {
+    const rootManager = new RootManager();
+
+    gl.clear(gl.COLOR_BUFFER_BIT);
+
+    rootManager.rootObject.drawRecursively();
+  }
+
   /**
    *
    * @param {string} canvasId
@@ -70,11 +78,6 @@ class CanvasManager {
     gl.uniformMatrix4fv(projectionMatLoc, false, flatten(projectionMat));
 
     lightingInit(this.program);
-  }
-
-  render() {
-    gl.clear(gl.COLOR_BUFFER_BIT);
-    // TODO: rootHierarchy를 두고 drawRecursively()
   }
 }
 

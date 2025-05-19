@@ -34,7 +34,7 @@ class HierarchyObject {
     this._mergePrimitives();
   }
 
-  constructor(primitives, transform = new Transform()) {
+  constructor(primitives = [], transform = new Transform()) {
     this.primitives = primitives;
     this.transform = transform;
   }

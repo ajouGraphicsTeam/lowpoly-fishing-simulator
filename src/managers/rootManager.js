@@ -10,5 +10,6 @@ class RootManager {
     this.animationManager = new AnimationManager();
     this.canvasManager = new CanvasManager("gl-canvas");
     this.cameraManager = new CameraManager();
+    this.rootObject = new HierarchyObject();
   }
 }

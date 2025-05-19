@@ -215,13 +215,43 @@
       const rootManager = new RootManager();
       rootManager.init();
 
-      const robotArm = new RobotArm(
+      rootManager.rootObject.children["robotArm"] = new RobotArm(
         new Transform({
           position: vec3(0, -0.8, 0),
           rotation: vec3(0, 0, -30),
         })
       );
-      robotArm.drawRecursively();
+
+      setCanvas = (event) => {
+        console.clear();
+
+        rootManager.cameraManager.eye = vec3(
+          parseFloat(eye_x.value),
+          parseFloat(eye_y.value),
+          parseFloat(eye_z.value)
+        );
+        rootManager.cameraManager.at = vec3(
+          parseFloat(at_x.value),
+          parseFloat(at_y.value),
+          parseFloat(at_z.value)
+        );
+        rootManager.cameraManager.up = vec3(
+          parseFloat(up_x.value),
+          parseFloat(up_y.value),
+          parseFloat(up_z.value)
+        );
+
+        rootManager.canvasManager.render();
+      };
+      setCanvas();
+
+      document
+        .querySelectorAll(
+          "#eye_x, #eye_y, #eye_z, #at_x, #at_y, #at_z, #up_x, #up_y, #up_z"
+        )
+        .forEach((input) => {
+          input.addEventListener("input", setCanvas);
+        });
 
       resetCamera = () => {
         eye_x.value = 0;
@@ -237,6 +267,8 @@
 
       frontCamera.addEventListener("click", (event) => {
         resetCamera();
+
+        setCanvas();
       });
       sideCamera.addEventListener("click", (event) => {
         resetCamera();
@@ -244,6 +276,8 @@
         eye_x.value = 1;
         eye_y.value = 0;
         eye_z.value = 0;
+
+        setCanvas();
       });
       topCamera.addEventListener("click", (event) => {
         resetCamera();
@@ -255,6 +289,8 @@
         up_x.value = 0;
         up_y.value = 0;
         up_z.value = -1;
+
+        setCanvas();
       });
     </script>
   </body>
