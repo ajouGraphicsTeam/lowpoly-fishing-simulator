@@ -41,6 +41,25 @@ class CameraManager {
     this.updateMat();
   }
 
+  /**
+   *
+   * @param {vec3} delta
+   */
+  moveCamera(delta) {
+    const transformedDelta = mult(mat4(delta), this.viewMat);
+
+    this._eye = vec3(
+      this._eye.X + transformedDelta[0].X,
+      this._eye.Y + transformedDelta[0].Y,
+      this._eye.Z + transformedDelta[0].Z
+    );
+    this._at = vec3(
+      this._at.X + transformedDelta[0].X,
+      this._at.Y + transformedDelta[0].Y,
+      this._at.Z + transformedDelta[0].Z
+    );
+  }
+
   updateMat() {
     this.viewMat = lookAt(this._eye, this._at, this._up);
 
