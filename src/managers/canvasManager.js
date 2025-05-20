@@ -1,15 +1,34 @@
 class CanvasManager {
   max_length_to_draw = Infinity;
 
+  /** lighting */
+  lightPosition = vec4(0.0, 0.0, 1.0, 1.0); // directional light
+
+  lightAmbient = vec4(0.2, 0.2, 0.2, 1.0); // 𝐿𝑎 (dark gray)
+  lightDiffuse = vec4(1.0, 1.0, 0.0, 1.0); // 𝐿𝑑 (yellow)
+  lightSpecular = vec4(1.0, 1.0, 1.0, 1.0); // 𝐿𝑠 (white)
+
+  materialAmbient = vec4(1.0, 0.0, 1.0, 1.0); // 𝑘𝑎
+  materialDiffuse = vec4(1.0, 0.8, 0.0, 1.0); // 𝑘𝑑
+  materialSpecular = vec4(1.0, 0.8, 0.0, 1.0); // 𝑘𝑠
+
+  materialShininess = 100.0; // 𝛼: a shininess for specular term
+  /** lighting end */
+
   /**
    *
    * @param {string} canvasId
    */
   constructor(canvasId) {
     this.init(canvasId);
+  }
 
-    this.lineManager = new LineManager(this);
-    this.modelViewManager = new ModelViewManager(this);
+  render() {
+    const rootManager = new RootManager();
+
+    gl.clear(gl.COLOR_BUFFER_BIT);
+
+    rootManager.rootObject.drawRecursively();
   }
 
   /**
@@ -53,15 +72,15 @@ class CanvasManager {
     gl.vertexAttribPointer(vPosition, 3, gl.FLOAT, false, 0, 0);
     gl.enableVertexAttribArray(vPosition);
 
-    // init modelViewMatrix  // TODO: change to camera mat
-    const modelViewMat = mat4(); // 4x4 identity matrix
-    const modelViewMatLoc = gl.getUniformLocation(this.program, "uModelMat");
-    gl.uniformMatrix4fv(modelViewMatLoc, false, flatten(modelViewMat));
+    // init viewMat (cameraMat
+    const viewMat = mat4(); // 4x4 identity matrix
+    this.viewMatLoc = gl.getUniformLocation(this.program, "uViewMat");
+    gl.uniformMatrix4fv(this.viewMatLoc, false, flatten(viewMat));
 
     // init modelViewMatrix
     const modelMat = mat4(); // 4x4 identity matrix
-    const modelMatLoc = gl.getUniformLocation(this.program, "uModelViewMat");
-    gl.uniformMatrix4fv(modelMatLoc, false, flatten(modelMat));
+    this.modelMatLoc = gl.getUniformLocation(this.program, "uModelMat");
+    gl.uniformMatrix4fv(this.modelMatLoc, false, flatten(modelMat));
 
     // init projectionMatrix
     const [fovy, aspect, near, far] = [120, 1, 0.1, 10];
@@ -72,21 +91,37 @@ class CanvasManager {
     );
     gl.uniformMatrix4fv(projectionMatLoc, false, flatten(projectionMat));
 
-    lightingInit(this.program);
+    this.lightingSync();
   }
+  /**
+   * sync with vertex-shader
+   * TODO: 최적화를 위해 location 빼두기 (getUniformLocation 안쓰도록)
+   */
+  lightingSync() {
+    //we can use the function mult that multiplies two vec4s component by component
+    const ambientProduct = mult(this.lightAmbient, this.materialAmbient);
+    const diffuseProduct = mult(this.lightDiffuse, this.materialDiffuse);
+    const specularProduct = mult(this.lightSpecular, this.materialSpecular);
 
-  render() {
-    gl.clear(gl.COLOR_BUFFER_BIT);
-
-    console.log(
-      `zigzag: ${this.zigzag}\n` +
-        `thickness: ${this.thickness}\n` +
-        `division: ${this.division}\n` +
-        `draw_type: ${this.draw_type}\n` +
-        `max_length_to_draw: ${this.max_length_to_draw}\n`
+    gl.uniform4fv(
+      gl.getUniformLocation(this.program, "ambientProduct"),
+      flatten(ambientProduct)
     );
-
-    console.log(" - lines");
-    this.lineManager.drawVertices();
+    gl.uniform4fv(
+      gl.getUniformLocation(this.program, "diffuseProduct"),
+      flatten(diffuseProduct)
+    );
+    gl.uniform4fv(
+      gl.getUniformLocation(this.program, "specularProduct"),
+      flatten(specularProduct)
+    );
+    gl.uniform4fv(
+      gl.getUniformLocation(this.program, "lightPosition"),
+      flatten(this.lightPosition)
+    );
+    gl.uniform1f(
+      gl.getUniformLocation(this.program, "shininess"),
+      this.materialShininess
+    );
   }
 }

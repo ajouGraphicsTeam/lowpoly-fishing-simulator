@@ -1,20 +1,22 @@
-class HierarchyManager {
+class HierarchyObject {
   /**
-   * @type {HierarchyManager}
+   * @type {HierarchyObject}
    */
   parent;
 
   /**
-   * @type {HierarchyManager[]}
+   * <name, HierarchyObject>
+   *
+   * @type {{string: HierarchyObject}}
    */
-  children = [];
+  children = {};
 
   /**
-   * @type {mat4}
-   * 현재의 좌표계에서 parent의 좌표계로 가는 행렬
+   * @type {Transform}
+   * Transform Component
    */
 
-  transform = new Transform();
+  transform;
 
   /**
    * @type {PrimitiveBase}
@@ -30,6 +32,11 @@ class HierarchyManager {
   set primitives(newPrimitives) {
     this._primitives = newPrimitives;
     this._mergePrimitives();
+  }
+
+  constructor(primitives = [], transform = new Transform()) {
+    this.primitives = primitives;
+    this.transform = transform;
   }
 
   _mergePrimitives() {
@@ -49,7 +56,9 @@ class HierarchyManager {
     this.draw(parentsFrameMat);
     const frameMat = mult(parentsFrameMat, this.transform.modelMat);
 
-    this.children.forEach((child, idx) => child.drawRecursively(frameMat));
+    Object.values(this.children).forEach((child) =>
+      child.drawRecursively(frameMat)
+    );
   }
 
   /**

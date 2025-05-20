@@ -13,7 +13,7 @@
       varying vec4 fColor;
 
       uniform mat4 uModelMat;
-      uniform mat4 uModelViewMat;
+      uniform mat4 uViewMat;
       uniform mat4 uProjectionMat;
 
       uniform vec4 ambientProduct, diffuseProduct, specularProduct;
@@ -21,7 +21,7 @@
       uniform float shininess;
 
       void main() {
-        vec3 pos = (uModelViewMat * uModelMat * aVertexPosition).xyz;
+        vec3 pos = (uViewMat * uModelMat * aVertexPosition).xyz;
 
         //fixed light position
         vec3 light = lightPosition.xyz;
@@ -31,7 +31,7 @@
         vec4 NN = vec4(aVertexNormal, 0);
 
         // Transform vertex normal into eye coordinates
-        vec3 N = normalize( (uModelViewMat * NN).xyz );
+        vec3 N = normalize( (uViewMat * uModelMat * NN).xyz );
 
         // Compute terms in the illumination equation
         vec4 ambient = ambientProduct;
@@ -50,7 +50,7 @@
 
 
         gl_PointSize = 5.0;
-        gl_Position = uProjectionMat * uModelViewMat * uModelMat * aVertexPosition;
+        gl_Position = uProjectionMat * uViewMat * uModelMat * aVertexPosition;
       }
     </script>
 
@@ -66,27 +66,25 @@
     <script type="text/javascript" src="Common/initShaders.js"></script>
     <script type="text/javascript" src="Common/MV.js"></script>
 
-    <script type="text/javascript" src="src/models/transform.js"></script>
-    <script type="text/javascript" src="src/models/camera.js"></script>
+    <script type="text/javascript" src="src/constants.js"></script>
     <script type="text/javascript" src="src/prototypes.js"></script>
     <script type="text/javascript" src="src/animation.js"></script>
-    <script type="text/javascript" src="src/modelViewMat.js"></script>
-    <script type="text/javascript" src="src/lighting.js"></script>
-    <script type="text/javascript" src="src/primitives.js"></script>
-
+    <script type="text/javascript" src="src/components/transform.js"></script>
+    <script type="text/javascript" src="src/components/primitives.js"></script>
     <script
       type="text/javascript"
-      src="src/managers/primitiveManager.js"></script>
+      src="src/objects/hierarchyObject.js"></script>
+    <script type="text/javascript" src="src/objects/prefabObject.js"></script>
+    <script type="text/javascript" src="src/managers/rootManager.js"></script>
     <script
       type="text/javascript"
       src="src/managers/animationManager.js"></script>
-    <script
-      type="text/javascript"
-      src="src/managers/hierarchyManager.js"></script>
     <script type="text/javascript" src="src/managers/canvasManager.js"></script>
-    <script type="text/javascript" src="src/managers/rootManager.js"></script>
+    <script type="text/javascript" src="src/managers/cameraManager.js"></script>
 
     <script type="text/javascript" src="fishing.js"></script>
+
+    <script type="text/javascript" src="src/data/prefabs/robotArm.js"></script>
   </head>
 
   <body>
@@ -97,91 +95,14 @@
 
       <div>
         <div id="panel" class="flex flex-col gap-2">
-          <div class="setting flex">
-            <p>zigzag:&nbsp;</p>
-            <input id="zigzag" type="checkbox" class="border p-1" checked />
-          </div>
+          <div class="light">
+            <p>light position:</p>
 
-          <div class="setting">
-            <p>thickness:&nbsp;</p>
-            <input
-              id="thickness"
-              type="number"
-              min="0"
-              value="0.05"
-              step="0.01"
-              class="border p-1" />
-          </div>
-
-          <div class="setting">
-            <p>depth:&nbsp;</p>
-            <input
-              id="depth"
-              type="number"
-              min="0"
-              value="0.05"
-              step="0.01"
-              class="border p-1" />
-          </div>
-
-          <div class="setting">
-            <p>division:&nbsp;</p>
-            <input
-              id="division"
-              type="number"
-              min="0"
-              value="50"
-              step="1"
-              class="border p-1" />
-          </div>
-
-          <div class="setting">
-            <p>draw type:&nbsp;</p>
-            <select id="draw_type" class="border p-1">
-              <script>
-                draw_type.innerHTML = Object.entries(DRAW_TYPE)
-                  .map(
-                    ([key, value]) => `<option value="${value}">${key}</option>`
-                  )
-                  .join("");
-                draw_type.value = DRAW_TYPE.LINE_LOOP;
-              </script>
-            </select>
-          </div>
-
-          <div class="animation">
-            <p>animation:</p>
-            <label class="ml-4">- sequential</label>
-            <input
-              id="sequential_animation"
-              type="checkbox"
-              class="border p-1" />
-          </div>
-
-          <div class="camera">
-            <p>camera:</p>
-
-            <div class="flex gap-4">
-              <label class="ml-4">- preset</label>
-              <div>
-                <button id="frontCamera" type="button" class="border px-1">
-                  front
-                </button>
-                <button id="sideCamera" type="button" class="border px-1">
-                  side
-                </button>
-                <button id="topCamera" type="button" class="border px-1">
-                  top
-                </button>
-              </div>
-            </div>
-
-            <label class="ml-4">- eye</label>
             <div class="ml-7">
               <div class="my-1">
                 <label>X: </label>
                 <input
-                  id="eye_x"
+                  id="light_x"
                   type="number"
                   value="0"
                   step="0.01"
@@ -190,7 +111,7 @@
               <div class="my-1">
                 <label>Y: </label>
                 <input
-                  id="eye_y"
+                  id="light_y"
                   type="number"
                   value="0"
                   step="0.01"
@@ -199,7 +120,7 @@
               <div class="my-1">
                 <label>Z: </label>
                 <input
-                  id="eye_z"
+                  id="light_z"
                   type="number"
                   value="1"
                   step="0.01"
@@ -207,368 +128,278 @@
               </div>
             </div>
 
-            <label class="ml-4">- at</label>
-            <div class="ml-7">
-              <div class="my-1">
-                <label>X: </label>
-                <input
-                  id="at_x"
-                  type="number"
-                  value="0"
-                  step="0.01"
-                  class="border pl-1" />
-              </div>
-              <div class="my-1">
-                <label>Y: </label>
-                <input
-                  id="at_y"
-                  type="number"
-                  value="0"
-                  step="0.01"
-                  class="border pl-1" />
-              </div>
-              <div class="my-1">
-                <label>Z: </label>
-                <input
-                  id="at_z"
-                  type="number"
-                  value="0"
-                  step="0.01"
-                  class="border pl-1" />
-              </div>
-            </div>
+            <div class="camera">
+              <p>camera:</p>
 
-            <label class="ml-4">- up</label>
-            <div class="ml-7">
-              <div class="my-1">
-                <label>X: </label>
-                <input
-                  id="up_x"
-                  type="number"
-                  value="0"
-                  step="1"
-                  class="border pl-1" />
+              <div class="flex gap-4">
+                <label class="ml-4">- preset</label>
+                <div>
+                  <button id="frontCamera" type="button" class="border px-1">
+                    front
+                  </button>
+                  <button id="sideCamera" type="button" class="border px-1">
+                    side
+                  </button>
+                  <button id="topCamera" type="button" class="border px-1">
+                    top
+                  </button>
+                </div>
               </div>
-              <div class="my-1">
-                <label>Y: </label>
-                <input
-                  id="up_y"
-                  type="number"
-                  value="1"
-                  step="1"
-                  class="border pl-1" />
-              </div>
-              <div class="my-1">
-                <label>Z: </label>
-                <input
-                  id="up_z"
-                  type="number"
-                  value="0"
-                  step="1"
-                  class="border pl-1" />
-              </div>
-            </div>
-          </div>
 
-          <div class="transformation">
-            <p>transformation:</p>
-            <button
-              id="transformResetButton"
-              type="button"
-              class="border px-1 ml-7">
-              reset transfrom
-            </button>
-            <br />
+              <label class="ml-4">- eye</label>
+              <div class="ml-7">
+                <div class="my-1">
+                  <label>X: </label>
+                  <input
+                    id="eye_x"
+                    type="number"
+                    value="0"
+                    step="0.01"
+                    class="border pl-1" />
+                </div>
+                <div class="my-1">
+                  <label>Y: </label>
+                  <input
+                    id="eye_y"
+                    type="number"
+                    value="0"
+                    step="0.01"
+                    class="border pl-1" />
+                </div>
+                <div class="my-1">
+                  <label>Z: </label>
+                  <input
+                    id="eye_z"
+                    type="number"
+                    value="1"
+                    step="0.01"
+                    class="border pl-1" />
+                </div>
+              </div>
 
-            <label class="ml-4">- rotation</label>
-            <div class="ml-7">
-              <div class="mb-1">
-                X :
-                <input
-                  id="x_deg"
-                  type="range"
-                  min="-360"
-                  max="360"
-                  value="30" />
-                <label id="x_deg_text">30°</label>
+              <label class="ml-4">- at</label>
+              <div class="ml-7">
+                <div class="my-1">
+                  <label>X: </label>
+                  <input
+                    id="at_x"
+                    type="number"
+                    value="0"
+                    step="0.01"
+                    class="border pl-1" />
+                </div>
+                <div class="my-1">
+                  <label>Y: </label>
+                  <input
+                    id="at_y"
+                    type="number"
+                    value="0"
+                    step="0.01"
+                    class="border pl-1" />
+                </div>
+                <div class="my-1">
+                  <label>Z: </label>
+                  <input
+                    id="at_z"
+                    type="number"
+                    value="0"
+                    step="0.01"
+                    class="border pl-1" />
+                </div>
               </div>
-              <div class="mb-1">
-                Y :
-                <input
-                  id="y_deg"
-                  type="range"
-                  min="-360"
-                  max="360"
-                  value="-30" />
-                <label id="y_deg_text">-30°</label>
-              </div>
-              <div class="mb-1">
-                Z :
-                <input
-                  id="z_deg"
-                  type="range"
-                  min="-360"
-                  max="360"
-                  value="-10" />
-                <label id="z_deg_text">-10°</label>
-              </div>
-            </div>
 
-            <label class="ml-4">- translation</label>
-            <div class="ml-7">
-              <div class="my-1">
-                <label>X: </label>
-                <input
-                  id="x_translate"
-                  type="number"
-                  value="0.01"
-                  step="0.01"
-                  class="border pl-1" />
-              </div>
-              <div class="my-1">
-                <label>Y: </label>
-                <input
-                  id="y_translate"
-                  type="number"
-                  value="0.01"
-                  step="0.01"
-                  class="border pl-1" />
-              </div>
-              <div class="my-1">
-                <label>Z: </label>
-                <input
-                  id="z_translate"
-                  type="number"
-                  value="0.01"
-                  step="0.01"
-                  class="border pl-1" />
-              </div>
-            </div>
-
-            <label class="ml-4">- scale</label>
-            <div class="ml-7">
-              <div class="my-1">
-                <label>X: </label>
-                <input
-                  id="x_scale"
-                  type="number"
-                  value="1"
-                  step="0.1"
-                  class="border pl-1" />
-              </div>
-              <div class="my-1">
-                <label>Y: </label>
-                <input
-                  id="y_scale"
-                  type="number"
-                  value="1"
-                  step="0.1"
-                  class="border pl-1" />
-              </div>
-              <div class="my-1">
-                <label>Z: </label>
-                <input
-                  id="z_scale"
-                  type="number"
-                  value="1"
-                  step="0.1"
-                  class="border pl-1" />
+              <label class="ml-4">- up</label>
+              <div class="ml-7">
+                <div class="my-1">
+                  <label>X: </label>
+                  <input
+                    id="up_x"
+                    type="number"
+                    value="0"
+                    step="1"
+                    class="border pl-1" />
+                </div>
+                <div class="my-1">
+                  <label>Y: </label>
+                  <input
+                    id="up_y"
+                    type="number"
+                    value="1"
+                    step="1"
+                    class="border pl-1" />
+                </div>
+                <div class="my-1">
+                  <label>Z: </label>
+                  <input
+                    id="up_z"
+                    type="number"
+                    value="0"
+                    step="1"
+                    class="border pl-1" />
+                </div>
               </div>
             </div>
           </div>
         </div>
       </div>
-    </div>
 
-    <script id="main">
-      const rootManager = new RootManager();
-      const canvasManager = rootManager.canvasManager;
-      canvasManager.modelViewManager.updateModelView();
-      canvasManager.render();
+      <script id="main">
+        const rootManager = new RootManager();
+        rootManager.init();
 
-      // // for test
-      const box = new BoxPrimitive([
-        [0, 0.4, 0.025],
-        [0.1, 0.4, 0.025],
-        [0.1, -0.4, 0.025],
-        [0, -0.4, 0.025],
-        [0, 0.4, -0.025],
-        [0.1, 0.4, -0.025],
-        [0.1, -0.4, -0.025],
-        [0, -0.4, -0.025],
-      ]);
-      const box2 = new BoxPrimitive([
-        [0.1, 0.4, 0.025],
-        [0.2, 0.4, 0.025],
-        [0.2, -0.4, 0.025],
-        [0.1, -0.4, 0.025],
-        [0.1, 0.4, -0.025],
-        [0.2, 0.4, -0.025],
-        [0.2, -0.4, -0.025],
-        [0.1, -0.4, -0.025],
-      ]);
-      const hierarchyManager = new HierarchyManager();
-      const child = new HierarchyManager();
-      const child2 = new HierarchyManager();
+        rootManager.rootObject.children["robotArm"] = new RobotArm(
+          new Transform({
+            position: vec3(0, -0.8, 0),
+            rotation: vec3(0, 0, -30),
+          })
+        );
+        rootManager.canvasManager.render();
 
-      hierarchyManager.children.push(child);
-      child.children.push(child2);
+        setLight = (event) => {
+          // console.clear();
 
-      hierarchyManager.primitives = [box];
-      child.primitives = [box, box2];
-      child2.primitives = [box];
+          rootManager.canvasManager.lightPosition = vec4(
+            parseFloat(light_x.value),
+            parseFloat(light_y.value),
+            parseFloat(light_z.value)
+          );
+          rootManager.canvasManager.lightingSync();
+          rootManager.canvasManager.render();
+        };
 
-      hierarchyManager.transform.position = vec3(0.1, 0.1, 0);
-      child.transform.rotation = vec3(0, 0, -30);
-      child2.transform.anchor = vec3(0, 0.4, 0);
-      child2.transform.rotation = vec3(0, 0, 120);
+        setCanvas = (event) => {
+          // console.clear();
 
-      hierarchyManager.drawRecursively();
-
-      /////////
-      setConfig = (event) => {
-        console.clear();
-
-        canvasManager.lineManager.zigzag = zigzag.checked;
-        canvasManager.lineManager.thickness = parseFloat(thickness.value);
-        canvasManager.lineManager.depth = parseFloat(depth.value);
-        canvasManager.lineManager.division = parseInt(division.value);
-        canvasManager.lineManager.draw_type = draw_type.value;
-
-        canvasManager.render();
-      };
-
-      setAnim = (event) => {
-        if (sequential_animation.checked == false) {
-          sequentialAnimator.stop();
-          return;
-        }
-        sequentialAnimator.run();
-      };
-
-      setCanvas = (event) => {
-        console.clear();
-
-        x_deg_text.textContent = `${x_deg.value}°`;
-        y_deg_text.textContent = `${y_deg.value}°`;
-        z_deg_text.textContent = `${z_deg.value}°`;
-
-        canvasManager.modelViewManager.camera = {
-          eye: vec3(
+          rootManager.cameraManager.eye = vec3(
             parseFloat(eye_x.value),
             parseFloat(eye_y.value),
             parseFloat(eye_z.value)
-          ),
-          at: vec3(
+          );
+          rootManager.cameraManager.at = vec3(
             parseFloat(at_x.value),
             parseFloat(at_y.value),
             parseFloat(at_z.value)
-          ),
-          up: vec3(
+          );
+          rootManager.cameraManager.up = vec3(
             parseFloat(up_x.value),
             parseFloat(up_y.value),
             parseFloat(up_z.value)
-          ),
+          );
+
+          rootManager.canvasManager.render();
         };
 
-        canvasManager.modelViewManager.rotateDeg = vec3(
-          parseFloat(x_deg.value),
-          parseFloat(y_deg.value),
-          parseFloat(z_deg.value)
-        );
-        canvasManager.modelViewManager.translateVec3 = vec3(
-          parseFloat(x_translate.value),
-          parseFloat(y_translate.value),
-          parseFloat(z_translate.value)
-        );
-        canvasManager.modelViewManager.scaleVec3 = vec3(
-          parseFloat(x_scale.value),
-          parseFloat(y_scale.value),
-          parseFloat(z_scale.value)
-        );
+        document
+          .querySelectorAll("#light_x, #light_y, #light_z")
+          .forEach((input) => {
+            input.addEventListener("input", setLight);
+          });
+        document
+          .querySelectorAll(
+            "#eye_x, #eye_y, #eye_z, #at_x, #at_y, #at_z, #up_x, #up_y, #up_z"
+          )
+          .forEach((input) => {
+            input.addEventListener("input", setCanvas);
+          });
 
-        canvasManager.modelViewManager.updateModelView();
-        canvasManager.render();
-      };
+        resetCamera = () => {
+          eye_x.value = 0;
+          eye_y.value = 0;
+          eye_z.value = 1;
+          at_x.value = 0;
+          at_y.value = 0;
+          at_z.value = 0;
+          up_x.value = 0;
+          up_y.value = 1;
+          up_z.value = 0;
+        };
 
-      resetCamera = () => {
-        eye_x.value = 0;
-        eye_y.value = 0;
-        eye_z.value = 1;
-        at_x.value = 0;
-        at_y.value = 0;
-        at_z.value = 0;
-        up_x.value = 0;
-        up_y.value = 1;
-        up_z.value = 0;
-      };
+        frontCamera.addEventListener("click", (event) => {
+          resetCamera();
 
-      resetTransform = () => {
-        x_deg.value = 0;
-        y_deg.value = 0;
-        z_deg.value = 0;
-        x_translate.value = 0;
-        y_translate.value = 0;
-        z_translate.value = 0;
-        x_scale.value = 1;
-        y_scale.value = 1;
-        z_scale.value = 1;
-      };
-
-      resetAll = () => {
-        resetCamera();
-        resetTransform();
-      };
-
-      document
-        .querySelectorAll("#zigzag, #thickness, #depth, #division, #draw_type")
-        .forEach((input) => {
-          input.addEventListener("input", setConfig);
+          setCanvas();
         });
+        sideCamera.addEventListener("click", (event) => {
+          resetCamera();
 
-      document
-        .querySelector("#sequential_animation")
-        .addEventListener("input", setAnim);
+          eye_x.value = 1;
+          eye_y.value = 0;
+          eye_z.value = 0;
 
-      document
-        .querySelectorAll(
-          "#eye_x, #eye_y, #eye_z, #at_x, #at_y, #at_z, #up_x, #up_y, #up_z, " +
-            "#x_deg, #y_deg, #z_deg, #x_translate, #y_translate, #z_translate, #x_scale, #y_scale, #z_scale"
-        )
-        .forEach((input) => {
-          input.addEventListener("input", setCanvas);
+          setCanvas();
         });
+        topCamera.addEventListener("click", (event) => {
+          resetCamera();
 
-      frontCamera.addEventListener("click", (event) => {
-        resetCamera();
-        setCanvas();
-      });
-      sideCamera.addEventListener("click", (event) => {
-        resetCamera();
+          eye_x.value = 0;
+          eye_y.value = 1;
+          eye_z.value = 0;
 
-        eye_x.value = 1;
-        eye_y.value = 0;
-        eye_z.value = 0;
+          up_x.value = 0;
+          up_y.value = 0;
+          up_z.value = -1;
 
-        setCanvas();
-      });
-      topCamera.addEventListener("click", (event) => {
-        resetCamera();
+          setCanvas();
+        });
+      </script>
 
-        eye_x.value = 0;
-        eye_y.value = 1;
-        eye_z.value = 0;
+      <script id="mouse">
+        let prevMouseX = 0;
+        let prevMouseY = 0;
 
-        up_x.value = 0;
-        up_y.value = 0;
-        up_z.value = -1;
+        // 마우스가 움직일 때마다 호출
+        function moveCameraByMouse(e) {
+          const dx = e.clientX - prevMouseX;
+          const dy = e.clientY - prevMouseY;
 
-        setCanvas();
-      });
-      transformResetButton.addEventListener("click", (event) => {
-        resetTransform();
-        setCanvas();
-      });
-    </script>
+          // Debouncing, 마우스가 움직인 거리가 10 이하면 무시
+          // 랜더링은 리소스를 많이 쓰므로
+          if (dx * dx + dy * dy < 100) {
+            return;
+          }
+
+          prevMouseX = e.clientX;
+          prevMouseY = e.clientY;
+
+          rootManager.cameraManager.moveCamera(vec3(-dx / 500, dy / 500, 0));
+
+          // control panel과 동기화
+          eye_x.value = rootManager.cameraManager.eye.X;
+          eye_y.value = rootManager.cameraManager.eye.Y;
+          eye_z.value = rootManager.cameraManager.eye.Z;
+
+          at_x.value = rootManager.cameraManager.at.X;
+          at_y.value = rootManager.cameraManager.at.Y;
+          at_z.value = rootManager.cameraManager.at.Z;
+          setCanvas();
+        }
+
+        // 마우스 버튼을 놓으면, moveCameraByMouse 제거
+        function handleMouseUp(e) {
+          if (e.button === 0) {
+            // 왼쪽 마우스 버튼일 경우
+            document.removeEventListener("mousemove", moveCameraByMouse);
+            document.removeEventListener("mouseup", handleMouseUp);
+          }
+        }
+
+        // 마우스 버튼이 눌리면 moveCameraByMouse 추가
+        function handleMouseDown(e) {
+          prevMouseX = e.clientX;
+          prevMouseY = e.clientY;
+
+          if (e.button === 0) {
+            // 왼쪽 마우스 버튼일 경우
+            document.addEventListener("mousemove", moveCameraByMouse);
+            document.addEventListener("mouseup", handleMouseUp);
+          }
+        }
+
+        // 초기에는 mousedown 리스너만
+        document
+          .getElementById("gl-canvas")
+          .addEventListener("mousedown", handleMouseDown);
+      </script>
+    </div>
   </body>
 </html>
