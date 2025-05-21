@@ -20,15 +20,14 @@ class CanvasManager {
    * @param {string} canvasId
    */
   constructor(canvasId) {
+    this.rootManager = new RootManager();
     this.init(canvasId);
   }
 
   render() {
-    const rootManager = new RootManager();
-
     gl.clear(gl.COLOR_BUFFER_BIT);
 
-    rootManager.rootObject.drawRecursively();
+    this.rootManager.rootObject.drawRecursively();
   }
 
   /**

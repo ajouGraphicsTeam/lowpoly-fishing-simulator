@@ -1,5 +1,7 @@
 class RobotArm extends PrefabObject {
   init() {
+    this.animator = new RobotArmAnimator(this);
+
     const _box = new BoxPrimitive([
       [-0.1, 0.5, 0.025],
       [0.1, 0.5, 0.025],
@@ -36,5 +38,7 @@ class RobotArm extends PrefabObject {
     this.children = {
       arm: _arm,
     };
+
+    this.animator.start();
   }
 }

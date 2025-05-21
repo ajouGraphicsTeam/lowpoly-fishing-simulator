@@ -4,7 +4,7 @@ class AnimationManager {
 
   playAnimation(animation) {
     animation.tick = 0;
-    _currently_played_animations.push(animation);
+    this._currently_played_animations.push(animation);
 
     if (!this.isPlaying) {
       this.isPlaying = true;
@@ -16,7 +16,7 @@ class AnimationManager {
     this._currently_played_animations =
       this._currently_played_animations.filter((ani) => ani !== animation);
 
-    if (this.this._currently_played_animations.empty()) {
+    if (this._currently_played_animations.empty()) {
       this.isPlaying = false;
     }
   }
@@ -27,9 +27,10 @@ class AnimationManager {
     }
 
     this._currently_played_animations.forEach((animation, idx) => {
-      animation.render();
+      animation.applyAnimationData();
     });
 
+    rootManager.canvasManager.render();
     window.requestAnimationFrame(this.render.bind(this));
   }
 }

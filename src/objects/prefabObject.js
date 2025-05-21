@@ -1,5 +1,8 @@
 class PrefabObject extends HierarchyObject {
-  animation; // TODO
+  /**
+   * @type {Animator}
+   */
+  animator;
 
   /**
    *
