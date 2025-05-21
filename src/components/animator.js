@@ -34,7 +34,15 @@ class Animator {
 
   applyAnimationData() {
     this.applyTransform(this.animationData[this.tick], this.object);
-    this.tick = (this.tick + 1) % this.animationData.length;
+
+    this.tick++;
+    if (this.tick >= this.animationData.length) {
+      if (this.loop) {
+        this.tick = 0;
+      } else {
+        this.stop();
+      }
+    }
   }
 
   /**

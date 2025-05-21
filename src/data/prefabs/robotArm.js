@@ -38,7 +38,5 @@ class RobotArm extends PrefabObject {
     this.children = {
       arm: _arm,
     };
-
-    this.animator.start();
   }
 }
