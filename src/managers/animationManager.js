@@ -16,7 +16,7 @@ class AnimationManager {
     this._currently_played_animations =
       this._currently_played_animations.filter((ani) => ani !== animation);
 
-    if (this._currently_played_animations.empty()) {
+    if (this._currently_played_animations.length == 0) {
       this.isPlaying = false;
     }
   }
