@@ -68,7 +68,7 @@
 
     <script type="text/javascript" src="src/constants.js"></script>
     <script type="text/javascript" src="src/prototypes.js"></script>
-    <script type="text/javascript" src="src/animation.js"></script>
+    <script type="text/javascript" src="src/components/animator.js"></script>
     <script type="text/javascript" src="src/components/transform.js"></script>
     <script type="text/javascript" src="src/components/primitives.js"></script>
     <script
@@ -84,6 +84,10 @@
 
     <script type="text/javascript" src="fishing.js"></script>
 
+    <!-- DATAS -->
+    <script
+      type="text/javascript"
+      src="src/data/animators/robotArm.js"></script>
     <script type="text/javascript" src="src/data/prefabs/robotArm.js"></script>
   </head>
 
@@ -238,6 +242,17 @@
                     class="border pl-1" />
                 </div>
               </div>
+            </div>
+          </div>
+
+          <div class="animation">
+            <p>animations:</p>
+            <div class="ml-7">
+              <button
+                class="border px-1"
+                onclick="rootManager.rootObject.children.robotArm.animator.start()">
+                robotArm wave
+              </button>
             </div>
           </div>
         </div>
