@@ -68,8 +68,6 @@ class HierarchyObject {
   draw(parentsFrameMat = mat4()) {
     const frameMat = mult(parentsFrameMat, this.transform.modelMat);
 
-    console.log(frameMat);
-
     const modelViewMatLoc = gl.getUniformLocation(
       rootManager.canvasManager.program,
       "uModelMat"
