@@ -10,6 +10,98 @@ hierarchyManager가 frameMatrix를 전파하여 사용
 
 모든 매니저들은 rootManager에서 접근 가능함.
 
+## 애니메이션 관련
+
+data의 prefabs/robotArm.js와 animators/robotArm.js를 보면 예시가 되어있는데,
+Animator의 animationData는 gemini한테
+
+````
+아래 코드는 내가 webgl로 만든 로봇팔이야
+```
+class RobotArm extends PrefabObject {
+  init() {
+    this.animator = new RobotArmAnimator(this);
+
+    const _box = new BoxPrimitive([
+      [-0.1, 0.5, 0.025],
+      [0.1, 0.5, 0.025],
+      [0.1, -0.5, 0.025],
+      [-0.1, -0.5, 0.025],
+      [-0.1, 0.5, -0.025],
+      [0.1, 0.5, -0.025],
+      [0.1, -0.5, -0.025],
+      [-0.1, -0.5, -0.025],
+    ]);
+
+    const _arm = new HierarchyObject([_box], new Transform());
+    _arm.children = {
+      innerArm: new HierarchyObject(
+        [_box],
+        new Transform({
+          position: vec3(0, 1, 0),
+          rotation: vec3(0, 0, 30),
+          anchor: vec3(0, 0.5, 0),
+        })
+      ),
+    };
+    _arm.children["innerArm"].children = {
+      innerArm: new HierarchyObject(
+        [_box],
+        new Transform({
+          position: vec3(0, 1, 0),
+          rotation: vec3(0, 0, 30),
+          anchor: vec3(0, 0.5, 0),
+        })
+      ),
+    };
+
+    this.children = {
+      arm: _arm,
+    };
+  }
+}
+```
+
+위 계층적 구조를 가지고 있는 로봇팔이 자연스럽게 좌우로 흔들리는 애니메이션을 만들 생각이거든?
+살짝 bvh파일처럼 해석될 수 있는 json 형식을 아래와 같이 정의했어
+
+```
+[
+  {
+    transform: new Transform(),
+    children: {
+      arm: {
+        transform: new Transform({
+          position: vec3(0, 1, 0),
+          rotation: vec3(0, 0, 30),
+          anchor: vec3(0, 0.5, 0),
+        }),
+        children: {
+          innerArm: {
+            transform: new Transform({
+              position: vec3(0, 1, 0),
+              rotation: vec3(0, 0, 30),
+              anchor: vec3(0, 0.5, 0),
+            }),
+            children: {
+              transform: new Transform({
+                position: vec3(0, 1, 0),
+                rotation: vec3(0, 0, 30),
+                anchor: vec3(0, 0.5, 0),
+              }),
+            },
+          },
+        },
+      },
+    },
+  },
+];
+```
+위 배열의 값을 초기상태로 60 프래임짜리 애니메이션을 6초 정도 만들고 싶은데 JS로 위와 같은 형식의 배열을 생성할 수 있는 코드를 짜줘
+````
+
+처럼 물어보면 찍어준다. (2.5 pro에서 테스트해봄)
+
 ## 작업할거 Tip
 
 fishing.html의 main 부분이랑
