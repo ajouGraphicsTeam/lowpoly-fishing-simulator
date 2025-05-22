@@ -361,8 +361,14 @@
       <script id="mouse">
         let prevMouseX = 0;
         let prevMouseY = 0;
+        let currentButton = -1;
+        /*
+        currentButton 없이 그냥 if(e.button === 0), if(e.button === 2)로 비교하니,
+        moveCameraByMouse에서 항상 e.button 값이 0으로 설정되는 문제가 있었음(타 event에서는 문제 없었음).
+        따라서 현재 눌린 버튼을 저장하는 currentButton을 추가하고
+        마우스 버튼을 누르고 뗄 때마다 값 업데이트하도록 설정하니 문제 해결됨.
+        */
 
-        // 마우스가 움직일 때마다 호출
         function moveCameraByMouse(e) {
           const dx = e.clientX - prevMouseX;
           const dy = e.clientY - prevMouseY;
@@ -376,9 +382,42 @@
           prevMouseX = e.clientX;
           prevMouseY = e.clientY;
 
-          rootManager.cameraManager.moveCamera(vec3(-dx / 500, dy / 500, 0));
+          // 마우스가 움직일 때마다 호출
+          if (currentButton === 0) {// left button: move camera (not rotating)
+            rootManager.cameraManager.moveCamera(vec3(-dx / 500, dy / 500, 0));
 
-          // control panel과 동기화
+          /*
+          at을 고정한 채, camera rotation을 수행함. 
+          마우스가 향하는 방향으로 카메라의 at을 증가시키며 rotate.
+          다만 2D 회전의 한계로 마우스 이동만으로 실제 z축 회전을 구현하진 못했음.
+          */
+          } else if (currentButton === 2) { // right button: rotate camera
+            const horizontalAngle = dx * 0.5;
+            const verticalAngle = dy * 0.5;
+
+            // horizontal rotation(Y axis)
+            const rotationY = rotateY(horizontalAngle);
+            let eye4 = vec4(rootManager.cameraManager.eye[0], rootManager.cameraManager.eye[1], rootManager.cameraManager.eye[2], 1.0);
+            let up4 = vec4(rootManager.cameraManager.up[0], rootManager.cameraManager.up[1], rootManager.cameraManager.up[2], 0.0);
+            
+            eye4 = mult(rotationY, eye4);
+            up4 = mult(rotationY, up4);
+            
+            rootManager.cameraManager.eye = vec3(eye4[0], eye4[1], eye4[2]);
+            rootManager.cameraManager.up = vec3(up4[0], up4[1], up4[2]);
+
+            // vertical rotation(X axis)
+            const rotationX = rotateX(verticalAngle);
+            eye4 = vec4(rootManager.cameraManager.eye[0], rootManager.cameraManager.eye[1], rootManager.cameraManager.eye[2], 1.0);
+            up4 = vec4(rootManager.cameraManager.up[0], rootManager.cameraManager.up[1], rootManager.cameraManager.up[2], 0.0);
+            
+            eye4 = mult(rotationX, eye4);
+            up4 = mult(rotationX, up4);
+            
+            rootManager.cameraManager.eye = vec3(eye4[0], eye4[1], eye4[2]);
+            rootManager.cameraManager.up = vec3(up4[0], up4[1], up4[2]);
+          }
+
           eye_x.value = rootManager.cameraManager.eye.X;
           eye_y.value = rootManager.cameraManager.eye.Y;
           eye_z.value = rootManager.cameraManager.eye.Z;
@@ -389,31 +428,57 @@
           setCanvas();
         }
 
-        // 마우스 버튼을 놓으면, moveCameraByMouse 제거
+        // 왼쪽 버튼이든 오른쪽 버튼이든 로직은 같음.
         function handleMouseUp(e) {
-          if (e.button === 0) {
-            // 왼쪽 마우스 버튼일 경우
+          if (e.button === 0 || e.button === 2) {
             document.removeEventListener("mousemove", moveCameraByMouse);
             document.removeEventListener("mouseup", handleMouseUp);
+            currentButton = -1;
           }
         }
 
-        // 마우스 버튼이 눌리면 moveCameraByMouse 추가
         function handleMouseDown(e) {
           prevMouseX = e.clientX;
           prevMouseY = e.clientY;
 
-          if (e.button === 0) {
-            // 왼쪽 마우스 버튼일 경우
+          if (e.button === 0 || e.button === 2) {
+            currentButton = e.button;
             document.addEventListener("mousemove", moveCameraByMouse);
             document.addEventListener("mouseup", handleMouseUp);
           }
         }
 
-        // 초기에는 mousedown 리스너만
+        function handleWheel(e) {
+          const delta = e.deltaY * 0.01;
+          
+          // move camera in the current direction(only distance)
+          const viewDirection = subtract(rootManager.cameraManager.at, rootManager.cameraManager.eye);
+          let distance = length(viewDirection);
+          normalize(viewDirection);
+          
+          // adjust distance(limit the minimum/maximum distance)
+          distance = Math.max(0.1, Math.min(10.0, distance + delta));
+          rootManager.cameraManager.eye = subtract(rootManager.cameraManager.at, scale(distance, viewDirection));
+
+          // control panel과 동기화
+          eye_x.value = rootManager.cameraManager.eye.X;
+          eye_y.value = rootManager.cameraManager.eye.Y;
+          eye_z.value = rootManager.cameraManager.eye.Z;
+          setCanvas();
+        }
+
+        // 우클릭 창 나오는 것 방지.
         document
           .getElementById("gl-canvas")
-          .addEventListener("mousedown", handleMouseDown);
+          .addEventListener("contextmenu", function(e) {
+            e.preventDefault();
+          });
+
+        // 초기에 mousedown 리스너뿐만 아니라 wheel 리스너도 추가해 줌
+        document
+          .getElementById("gl-canvas")
+          .addEventListener("mousedown", handleMouseDown)
+          .addEventListener("wheel", handleWheel);
       </script>
     </div>
   </body>
