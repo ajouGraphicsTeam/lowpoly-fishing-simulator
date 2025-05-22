@@ -468,17 +468,12 @@
         }
 
         // 우클릭 창 나오는 것 방지.
-        document
-          .getElementById("gl-canvas")
-          .addEventListener("contextmenu", function(e) {
-            e.preventDefault();
-          });
-
         // 초기에 mousedown 리스너뿐만 아니라 wheel 리스너도 추가해 줌
-        document
-          .getElementById("gl-canvas")
-          .addEventListener("mousedown", handleMouseDown)
-          .addEventListener("wheel", handleWheel);
+        document.addEventListener("contextmenu", function(e) {
+          e.preventDefault();
+        });
+        document.addEventListener("mousedown", handleMouseDown);
+        document.addEventListener("wheel", handleWheel);
       </script>
     </div>
   </body>
