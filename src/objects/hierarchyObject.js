@@ -26,6 +26,12 @@ class HierarchyObject {
   _mergedVertices = [];
   _mergedNormals = [];
 
+  /**
+   * @type {Object}
+   * Color information for this object
+   */
+  color = null;
+
   get primitives() {
     return this._primitives;
   }
@@ -34,9 +40,10 @@ class HierarchyObject {
     this._mergePrimitives();
   }
 
-  constructor(primitives = [], transform = new Transform()) {
+  constructor(primitives = [], transform = new Transform(), color = COLORS.DARK_YELLOW) { // default color: dark yellow
     this.primitives = primitives;
     this.transform = transform;
+    this.color = color 
   }
 
   _mergePrimitives() {
@@ -73,6 +80,13 @@ class HierarchyObject {
       "uModelMat"
     );
     gl.uniformMatrix4fv(modelViewMatLoc, false, flatten(frameMat));
+
+    if (this.color) { // 여기서 색상 정해줌
+      rootManager.canvasManager.materialAmbient = this.color.ambient;
+      rootManager.canvasManager.materialDiffuse = this.color.diffuse;
+      rootManager.canvasManager.materialSpecular = this.color.specular;
+      rootManager.canvasManager.lightingSync();
+    }
 
     gl.bindBuffer(gl.ARRAY_BUFFER, rootManager.canvasManager.vertexBufferId);
     gl.bufferData(
