@@ -14,6 +14,11 @@ class PrimitiveBase {
    * @type {vec3[]}
    */
   normals = [];
+  /**
+   * 텍스처 매핑에 사용할 정점들
+   * @type {vec2[]}
+   */
+  texCoords = [];
 
   /**
    *
@@ -47,18 +52,24 @@ class QuadPrimitive extends PrimitiveBase {
     // 평면의 절반 삼각형
     this.vertices.push(a);
     this.normals.push(normal);
+    this.texCoords.push(vec2(0, 1));
     this.vertices.push(b);
     this.normals.push(normal);
+    this.texCoords.push(vec2(0, 0));
     this.vertices.push(c);
     this.normals.push(normal);
+    this.texCoords.push(vec2(1, 0));
 
     // 나머지 절반 삼각형
     this.vertices.push(a);
     this.normals.push(normal);
+    this.texCoords.push(vec2(0, 1));
     this.vertices.push(c);
     this.normals.push(normal);
+    this.texCoords.push(vec2(1, 0));
     this.vertices.push(d);
     this.normals.push(normal);
+    this.texCoords.push(vec2(1, 1));
   }
 
   /**
@@ -123,5 +134,153 @@ class BoxPrimitive extends PrimitiveBase {
       back.normals,
       left.normals
     );
+
+    this.texCoords = this.texCoords.concat(
+      front.texCoords,
+      right.texCoords,
+      bottom.texCoords,
+      top.texCoords,
+      back.texCoords,
+      left.texCoords
+    );
+  }
+}
+
+class TrianglePrimitive extends PrimitiveBase {
+  /**
+   * 
+   * @param {vec3} a 첫 번째 점
+   * @param {vec3} b 두 번째 점
+   * @param {vec3} c 세 번째 점
+   * 
+   * @summary 세 점을 받아서 삼각형을 만듦. 
+   * @description 외적 계산이므로 점의 순서가 중요함!! 삼각형의 네 꼭짓점 순서: 가운데 위, 왼쪽 아래, 오른쪽 아래 순
+   */
+  constructor(a, b, c) {
+    super();
+    const t1 = subtract(b, a);
+    const t2 = subtract(c, b);
+    const normal = vec3(cross(t1, t2));
+
+    this.vertices.push(a);
+    this.normals.push(normal);
+    this.texCoords.push(vec2(0.5, 1));
+    this.vertices.push(b);
+    this.normals.push(normal);
+    this.texCoords.push(vec2(0, 0));
+    this.vertices.push(c);
+    this.normals.push(normal);
+    this.texCoords.push(vec2(1, 0));
+  }
+}
+
+class PrismPrimitive extends PrimitiveBase {
+  /**
+   * 
+   * @param {vec3} startPoint 밑면의 중심점
+   * @param {float} radius 반지름(=밑면의 중심점에서 밑면의 한 꼭짓점까지의 거리)
+   * @param {float} height 높이
+   * @param {int} segments 세그먼트 개수(=각의 개수)
+   * 
+   * @summary 밑면이 정다각형이며, 밑면의 중심점으로부터 y축으로 뻗는 n각기둥을 만듦.
+   * @description segments를 충분히 크게 하면 원기둥에 근사함.
+   */
+  constructor(startPoint, radius, height, segments) {
+    super();
+    /* 생각해보니, segment를 base, side로 나누면 안됨!
+    base와 side segment 개수는 무조건 일치해야 하니까. */
+    
+    for (let i = 0; i < segments; i++) {
+
+      // 기본적인 각도 및 offset 변수들 미리 계산
+      const theta1 = (i / segments) * 2 * Math.PI;
+      const theta2 = ((i + 1) / segments) * 2 * Math.PI;
+
+      const x1 = radius * Math.cos(theta1);
+      const z1 = radius * Math.sin(theta1);
+      const x2 = radius * Math.cos(theta2);
+      const z2 = radius * Math.sin(theta2);
+
+      // 밑면
+      const bottom = new TrianglePrimitive(
+        vec3(startPoint[0], startPoint[1], startPoint[2]),
+        vec3(startPoint[0] + x1, startPoint[1], startPoint[2] + z1),
+        vec3(startPoint[0] + x2, startPoint[1], startPoint[2] + z2)
+      );
+      this.vertices = this.vertices.concat(bottom.vertices);
+      this.normals = this.normals.concat(bottom.normals);
+      this.texCoords = this.texCoords.concat(bottom.texCoords);
+
+      // 윗면
+      const top = new TrianglePrimitive(
+        vec3(startPoint[0] + x2, startPoint[1] + height, startPoint[2] + z2),
+        vec3(startPoint[0] + x1, startPoint[1] + height, startPoint[2] + z1),
+        vec3(startPoint[0], startPoint[1] + height, startPoint[2])
+      );
+      this.vertices = this.vertices.concat(top.vertices);
+      this.normals = this.normals.concat(top.normals);
+      this.texCoords = this.texCoords.concat(top.texCoords);
+
+      // 옆면
+      const side = new QuadPrimitive(
+        vec3(startPoint[0] + x1, startPoint[1] + height, startPoint[2] + z1),
+        vec3(startPoint[0] + x2, startPoint[1] + height, startPoint[2] + z2),
+        vec3(startPoint[0] + x2, startPoint[1], startPoint[2] + z2),
+        vec3(startPoint[0] + x1, startPoint[1], startPoint[2] + z1)
+      );
+      this.vertices = this.vertices.concat(side.vertices);
+      this.normals = this.normals.concat(side.normals);
+      this.texCoords = this.texCoords.concat(side.texCoords);
+      // 참고) spread 연산자를 쓸 수도 있긴 하나, array size가 크면 concat이 더 속도 및 메모리 효율적이라고 함.
+    }
+  }
+}
+
+class PyramidPrimitive extends PrimitiveBase {
+  /**
+   * 
+   * @param {vec3} startPoint 밑면의 중심점
+   * @param {float} radius 반지름(=밑면의 중심점에서 밑면의 한 꼭짓점까지의 거리)
+   * @param {float} height 높이
+   * @param {int} segments 세그먼트 개수(=각의 개수)
+   * 
+   * @summary 밑면이 정다각형이며, 밑면의 중심점으로부터 y축으로 뻗는 n각뿔을 만듦.
+   * @description segments를 충분히 크게 하면 원뿔에 근사함.
+   */
+  constructor(startPoint, radius, height, segments) {
+    super();
+
+    for (let i = 0; i < segments; i++) {
+
+      // 기본적인 각도 및 offset 변수들 미리 계산
+      const theta1 = (i / segments) * 2 * Math.PI;
+      const theta2 = ((i + 1) / segments) * 2 * Math.PI;
+      
+      const x1 = radius * Math.cos(theta1);
+      const z1 = radius * Math.sin(theta1);
+      const x2 = radius * Math.cos(theta2);
+      const z2 = radius * Math.sin(theta2);
+
+      // 밑면
+      const bottom = new TrianglePrimitive(
+        vec3(startPoint[0], startPoint[1], startPoint[2]),
+        vec3(startPoint[0] + x1, startPoint[1], startPoint[2] + z1),
+        vec3(startPoint[0] + x2, startPoint[1], startPoint[2] + z2)
+      );
+      this.vertices = this.vertices.concat(bottom.vertices);
+      this.normals = this.normals.concat(bottom.normals);
+      this.texCoords = this.texCoords.concat(bottom.texCoords);
+
+      // 옆면
+      // 이 때, 옆면 관점에서 보면 삼각형의 밑변의 두 점 순서가 밑면과 반대임을 주의!!
+      const side = new TrianglePrimitive(
+        vec3(startPoint[0], startPoint[1] + height, startPoint[2]), // 꼭짓점(apex)
+        vec3(startPoint[0] + x2, startPoint[1], startPoint[2] + z2),
+        vec3(startPoint[0] + x1, startPoint[1], startPoint[2] + z1)
+      );
+      this.vertices = this.vertices.concat(side.vertices);
+      this.normals = this.normals.concat(side.normals);
+      this.texCoords = this.texCoords.concat(side.texCoords);
+    }
   }
 }

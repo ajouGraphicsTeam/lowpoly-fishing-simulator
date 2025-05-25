@@ -25,12 +25,19 @@ class HierarchyObject {
 
   _mergedVertices = [];
   _mergedNormals = [];
+  _mergedTexCoords = [];
 
   /**
    * @type {Object}
    * Color information for this object
    */
   color = null;
+
+  /**
+   * @type {WebGLTexture}
+   * Texture for this object
+   */
+  texture = null;
 
   get primitives() {
     return this._primitives;
@@ -40,10 +47,11 @@ class HierarchyObject {
     this._mergePrimitives();
   }
 
-  constructor(primitives = [], transform = new Transform(), color = COLORS.DARK_YELLOW) { // default color: dark yellow
+  constructor(primitives = [], transform = new Transform(), color = COLORS.DARK_YELLOW, texture = null) { // default color: dark yellow, default texture: null
     this.primitives = primitives;
     this.transform = transform;
-    this.color = color 
+    this.color = color;
+    this.texture = texture;
   }
 
   _mergePrimitives() {
@@ -52,6 +60,9 @@ class HierarchyObject {
     );
     this._mergedNormals = this._primitives.flatMap(
       (primitive) => primitive.normals
+    );
+    this._mergedTexCoords = this._primitives.flatMap(
+      (primitive) => primitive.texCoords
     );
   }
 
@@ -88,6 +99,15 @@ class HierarchyObject {
       rootManager.canvasManager.lightingSync();
     }
 
+    // 여기서 텍스쳐 정해줌
+    // 객체별 텍스처가 있으면 사용, null이면 텍스처링 비활성화
+    if (this.texture) {
+      gl.bindTexture(gl.TEXTURE_2D, this.texture);
+      gl.uniform1i(rootManager.canvasManager.useTextureLocation, true);
+    } else {
+      gl.uniform1i(rootManager.canvasManager.useTextureLocation, false);
+    }
+
     gl.bindBuffer(gl.ARRAY_BUFFER, rootManager.canvasManager.vertexBufferId);
     gl.bufferData(
       gl.ARRAY_BUFFER,
@@ -101,6 +121,18 @@ class HierarchyObject {
       this._mergedNormals.flatten(),
       gl.STATIC_DRAW
     );
+
+    // 다른 버퍼들처럼 동일하게 hierarchyObject에서 텍스쳐 버퍼도 바인딩 해줬음.
+    gl.bindBuffer(gl.ARRAY_BUFFER, rootManager.canvasManager.tBuffer);
+    gl.bufferData(
+      gl.ARRAY_BUFFER,
+      this._mergedTexCoords.flatten(),
+      gl.STATIC_DRAW
+    );
+    
+    var vTexCoord = gl.getAttribLocation(rootManager.canvasManager.program, "vTexCoord");
+    gl.vertexAttribPointer(vTexCoord, 2, gl.FLOAT, false, 0, 0);
+    gl.enableVertexAttribArray(vTexCoord);
 
     gl.drawArrays(DRAW_TYPE.TRIANGLE, 0, this._mergedVertices.length);
   }
