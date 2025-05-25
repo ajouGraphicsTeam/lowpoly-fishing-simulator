@@ -7,8 +7,8 @@ class CameraManager {
    */
   constructor(
     { eye, at, up } = {
-      eye: vec3(0, 0, 1),
-      at: vec3(0, 0, 0),
+      eye: vec3(-1.7, 4.3, 2.9),
+      at: vec3(-1, 0, 0),
       up: vec3(0, 1, 0),
     }
   ) {

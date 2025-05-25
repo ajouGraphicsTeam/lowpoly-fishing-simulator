@@ -9,8 +9,10 @@
 
     <script id="vertex-shader" type="x-shader/x-vertex">
       attribute vec4 aVertexPosition;
-      attribute vec3 aVertexNormal;
+      attribute vec3 aVertexNormal; 
       varying vec4 fColor;
+      attribute vec2 vTexCoord; // 버텍스 셰이더에서 쓸 텍스쳐 좌표
+      varying vec2 fTexCoord; // 프래그먼트 셰이더에 전달할 텍스쳐 좌표
 
       uniform mat4 uModelMat;
       uniform mat4 uViewMat;
@@ -23,8 +25,9 @@
       void main() {
         vec3 pos = (uViewMat * uModelMat * aVertexPosition).xyz;
 
-        //fixed light position
-        vec3 light = lightPosition.xyz;
+        // vec3 light = lightPosition.xyz;
+        // 이거 아래처럼 해야지 제대로 적용됨
+        vec3 light = (uViewMat * lightPosition).xyz;
         vec3 L = normalize( light - pos );
         vec3 E = normalize( -pos );
         vec3 H = normalize( L + E ); // halfway vector for Blinn-Phong shading
@@ -47,7 +50,7 @@
 
         fColor = ambient + diffuse + specular;
         fColor.a = 1.0;
-
+        fTexCoord = vTexCoord;
 
         gl_PointSize = 5.0;
         gl_Position = uProjectionMat * uViewMat * uModelMat * aVertexPosition;
@@ -55,10 +58,20 @@
     </script>
 
     <script id="fragment-shader" type="x-shader/x-fragment">
+      precision mediump float; // 해당 코드를 넣지 않으면 오류가 남.
+      // ref. https://github.com/skeeto/webgl-game-of-life/issues/1
       varying lowp vec4 fColor;
+      varying vec2 fTexCoord;
+      uniform sampler2D texture;
+      uniform bool useTexture; // 텍스처 사용 여부를 결정하는 플래그
 
       void main() {
-          gl_FragColor = fColor;
+        if (useTexture) {
+          vec4 texColor = texture2D(texture, fTexCoord);
+          gl_FragColor = fColor * texColor;
+        } else {
+          gl_FragColor = fColor; // 텍스처 없이 순수한 색상만 사용
+        }
       }
     </script>
 
@@ -66,12 +79,14 @@
     <script type="text/javascript" src="Common/initShaders.js"></script>
     <script type="text/javascript" src="Common/MV.js"></script>
 
-    <script type="text/javascript" src="src/constants.js"></script>
-    <script type="text/javascript" src="src/colors.js"></script>
+    <script type="text/javascript" src="src/constants/drawtypes.js"></script>
+    <script type="text/javascript" src="src/constants/colors.js"></script>
     <script type="text/javascript" src="src/prototypes.js"></script>
     <script type="text/javascript" src="src/components/animator.js"></script>
     <script type="text/javascript" src="src/components/transform.js"></script>
     <script type="text/javascript" src="src/components/primitives.js"></script>
+    <script type="text/javascript" src="src/components/textureMaker.js"></script>
+    <script type="text/javascript" src="src/constants/textures.js"></script>
     <script
       type="text/javascript"
       src="src/objects/hierarchyObject.js"></script>
@@ -90,6 +105,9 @@
       type="text/javascript"
       src="src/data/animators/robotArm.js"></script>
     <script type="text/javascript" src="src/data/prefabs/robotArm.js"></script>
+    <script type="text/javascript" src="src/data/prefabs/primitiveTestScene.js"></script>
+    <script type="text/javascript" src="src/data/prefabs/fishingGround.js"></script>
+    <script type="text/javascript" src="src/data/prefabs/ocean.js"></script>
   </head>
 
   <body>
@@ -109,7 +127,7 @@
                 <input
                   id="light_x"
                   type="number"
-                  value="0"
+                  value="100"
                   step="0.01"
                   class="border pl-1" />
               </div>
@@ -118,7 +136,7 @@
                 <input
                   id="light_y"
                   type="number"
-                  value="0"
+                  value="100"
                   step="0.01"
                   class="border pl-1" />
               </div>
@@ -127,7 +145,7 @@
                 <input
                   id="light_z"
                   type="number"
-                  value="1"
+                  value="100"
                   step="0.01"
                   class="border pl-1" />
               </div>
@@ -158,7 +176,7 @@
                   <input
                     id="eye_x"
                     type="number"
-                    value="0"
+                    value="-1.7"
                     step="0.01"
                     class="border pl-1" />
                 </div>
@@ -167,7 +185,7 @@
                   <input
                     id="eye_y"
                     type="number"
-                    value="0"
+                    value="4.3"
                     step="0.01"
                     class="border pl-1" />
                 </div>
@@ -176,7 +194,7 @@
                   <input
                     id="eye_z"
                     type="number"
-                    value="1"
+                    value="2.9"
                     step="0.01"
                     class="border pl-1" />
                 </div>
@@ -189,7 +207,7 @@
                   <input
                     id="at_x"
                     type="number"
-                    value="0"
+                    value="-1"
                     step="0.01"
                     class="border pl-1" />
                 </div>
@@ -263,12 +281,31 @@
         const rootManager = new RootManager();
         rootManager.init();
 
+        // 로봇 팔
         rootManager.rootObject.children["robotArm"] = new RobotArm(
           new Transform({
             position: vec3(0, -0.8, 0),
             rotation: vec3(0, 0, -30),
           })
         );
+
+        // Primitive 테스트
+        rootManager.rootObject.children["primitiveTestScene"] = new PrimitiveTestScene(
+          new Transform()
+        );
+
+        // 낚시터 (x 양의 방향, y = 0.5)
+        rootManager.rootObject.children["fishingGround"] = new FishingGround(
+          new Transform()
+        );
+
+        // 바다 (x 음의 방향, y = -2.0)
+        rootManager.rootObject.children["ocean"] = new Ocean(
+          new Transform()
+        );
+
+        // 이미지 텍스처는 initTextures()에서 자동으로 로드됩니다
+
         rootManager.canvasManager.render();
 
         setLight = (event) => {

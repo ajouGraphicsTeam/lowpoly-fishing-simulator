@@ -2,10 +2,10 @@ class CanvasManager {
   max_length_to_draw = Infinity;
 
   /** lighting */
-  lightPosition = vec4(0.0, 0.0, 1.0, 1.0); // directional light
+  lightPosition = vec4(100.0, 100.0, 100.0, 1.0); // directional light
 
   lightAmbient = vec4(0.2, 0.2, 0.2, 1.0); // 𝐿𝑎 (dark gray)
-  lightDiffuse = vec4(1.0, 1.0, 0.0, 1.0); // 𝐿𝑑 (yellow)
+  lightDiffuse = vec4(1.0, 1.0, 1.0, 1.0); // 𝐿𝑑 (white)
   lightSpecular = vec4(1.0, 1.0, 1.0, 1.0); // 𝐿𝑠 (white)
 
   materialAmbient = vec4(1.0, 0.0, 1.0, 1.0); // 𝑘𝑎
@@ -71,6 +71,9 @@ class CanvasManager {
     gl.vertexAttribPointer(vPosition, 3, gl.FLOAT, false, 0, 0);
     gl.enableVertexAttribArray(vPosition);
 
+    // 텍스쳐 초기화 함수들 여기 몰아넣었음.
+    this.initTexture();
+
     // init viewMat (cameraMat
     const viewMat = mat4(); // 4x4 identity matrix
     this.viewMatLoc = gl.getUniformLocation(this.program, "uViewMat");
@@ -92,6 +95,26 @@ class CanvasManager {
 
     this.lightingSync();
   }
+
+  /**
+   * Initialize texture codes.
+   */
+  initTexture() {
+    // 텍스쳐 정점 버퍼 생성(실제 데이터는 각 프리미티브들이 제공할 거임)
+    this.tBuffer = gl.createBuffer();
+    
+    // 모든 미리 정의된 텍스처들 초기화
+    initTextures();
+    
+    // 셰이더 유니폼에 텍스처 연결
+    gl.uniform1i(gl.getUniformLocation(this.program, "texture"), 0);
+    
+    // 텍스쳐 쓸지 말지 변수 셰이더에 연결
+    this.useTextureLocation = gl.getUniformLocation(this.program, "useTexture");
+  }
+
+
+
   /**
    * sync with vertex-shader
    * TODO: 최적화를 위해 location 빼두기 (getUniformLocation 안쓰도록)
