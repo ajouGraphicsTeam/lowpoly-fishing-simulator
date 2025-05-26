@@ -25,7 +25,7 @@ class CanvasManager {
   }
 
   render() {
-    gl.clear(gl.COLOR_BUFFER_BIT);
+    gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 
     this.rootManager.rootObject.drawRecursively();
   }

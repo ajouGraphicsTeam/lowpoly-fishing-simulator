@@ -323,7 +323,6 @@
             parseFloat(light_z.value)
           );
           rootManager.canvasManager.lightingSync();
-          rootManager.canvasManager.render();
         };
 
         setCanvas = (event) => {
@@ -345,7 +344,10 @@
             parseFloat(up_z.value)
           );
 
-          rootManager.canvasManager.render();
+          // 애니메이션이 실행 중이 아닐 때만 직접 렌더링
+          if (!rootManager.animationManager.isPlaying) {
+            rootManager.canvasManager.render();
+          }
         };
 
         document
@@ -375,7 +377,6 @@
 
         frontCamera.addEventListener("click", (event) => {
           resetCamera();
-
           setCanvas();
         });
         sideCamera.addEventListener("click", (event) => {
@@ -436,8 +437,8 @@
           다만 2D 회전의 한계로 마우스 이동만으로 실제 z축 회전을 구현하진 못했음.
           */
           } else if (currentButton === 2) { // right button: rotate camera
-            const horizontalAngle = dx * 0.5;
-            const verticalAngle = dy * 0.5;
+            const horizontalAngle = dx * 0.5/5;
+            const verticalAngle = dy * 0.5/5;
 
             // horizontal rotation(Y axis)
             const rotationY = rotateY(horizontalAngle);
@@ -469,7 +470,11 @@
           at_x.value = rootManager.cameraManager.at.X;
           at_y.value = rootManager.cameraManager.at.Y;
           at_z.value = rootManager.cameraManager.at.Z;
-          setCanvas();
+          
+          // 애니메이션이 실행 중이 아닐 때만 직접 렌더링
+          if (!rootManager.animationManager.isPlaying) {
+            rootManager.canvasManager.render();
+          }
         }
 
         // 왼쪽 버튼이든 오른쪽 버튼이든 로직은 같음.
@@ -493,7 +498,7 @@
         }
 
         function handleWheel(e) {
-          const delta = e.deltaY * 0.01;
+          const delta = e.deltaY * 0.001*2;
           
           // move camera in the current direction(only distance)
           const viewDirection = subtract(rootManager.cameraManager.at, rootManager.cameraManager.eye);
@@ -508,7 +513,11 @@
           eye_x.value = rootManager.cameraManager.eye.X;
           eye_y.value = rootManager.cameraManager.eye.Y;
           eye_z.value = rootManager.cameraManager.eye.Z;
-          setCanvas();
+          
+          // 애니메이션이 실행 중이 아닐 때만 직접 렌더링
+          if (!rootManager.animationManager.isPlaying) {
+            rootManager.canvasManager.render();
+          }
         }
 
         // 우클릭 창 나오는 것 방지.
