@@ -85,7 +85,7 @@ class CanvasManager {
     gl.uniformMatrix4fv(this.modelMatLoc, false, flatten(modelMat));
 
     // init projectionMatrix
-    const [fovy, aspect, near, far] = [120, 1, 0.1, 10];
+    const [fovy, aspect, near, far] = [120, 1, 0.1, 1000];
     const projectionMat = perspective(fovy, aspect, near, far);
     const projectionMatLoc = gl.getUniformLocation(
       this.program,

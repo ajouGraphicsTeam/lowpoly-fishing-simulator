@@ -13,11 +13,10 @@ class RobotArm extends PrefabObject {
       [-0.1, -0.5, -0.025],
     ]);
 
-    // 가장 아래 팔(기본 색상 바탕에 빨강 하양 텍스처)
-    // const _arm = new HierarchyObject([_box], new Transform(), null, TEXTURES.CHECKERBOARD_RED_WHITE);
+    // 가장 아래 팔
     const _arm = new HierarchyObject([_box], new Transform(), COLORS.GRAY, TEXTURES.ROBOT_TEXTURE);
 
-    // 그 다음 팔(세로 방향 그라데이션 텍스처)
+    // 그 다음 팔
     _arm.children = {
       innerArm: new HierarchyObject(
         [_box],
@@ -27,12 +26,11 @@ class RobotArm extends PrefabObject {
           anchor: vec3(0, 0.5, 0),
         }),
         COLORS.GRAY,
-        //TEXTURES.GRADIENT_GREEN_YELLOW_H
         TEXTURES.ROBOT_TEXTURE
       ),
     };
 
-    // 마지막 말단 팔(수직 줄무늬 텍스처)
+    // 마지막 말단 팔
     _arm.children["innerArm"].children = {
       innerArm: new HierarchyObject(
         [_box],
@@ -42,7 +40,6 @@ class RobotArm extends PrefabObject {
           anchor: vec3(0, 0.5, 0),
         }),
         COLORS.GRAY,
-        //TEXTURES.STRIPES_RED_BLUE_V
         TEXTURES.ROBOT_TEXTURE
       ),
     };

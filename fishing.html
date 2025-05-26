@@ -108,6 +108,7 @@
     <script type="text/javascript" src="src/data/prefabs/primitiveTestScene.js"></script>
     <script type="text/javascript" src="src/data/prefabs/fishingGround.js"></script>
     <script type="text/javascript" src="src/data/prefabs/ocean.js"></script>
+    <script type="text/javascript" src="src/data/prefabs/skyBox.js"></script>
   </head>
 
   <body>
@@ -304,6 +305,11 @@
           new Transform()
         );
 
+        // 스카이박스 (배경 하늘)
+        rootManager.rootObject.children["skyBox"] = new SkyBox(
+          new Transform()
+        );
+
         // 이미지 텍스처는 initTextures()에서 자동으로 로드됩니다
 
         rootManager.canvasManager.render();
@@ -495,7 +501,7 @@
           normalize(viewDirection);
           
           // adjust distance(limit the minimum/maximum distance)
-          distance = Math.max(0.1, Math.min(10.0, distance + delta));
+          distance = Math.max(0.1, Math.min(1000.0, distance + delta));
           rootManager.cameraManager.eye = subtract(rootManager.cameraManager.at, scale(distance, viewDirection));
 
           // control panel과 동기화
