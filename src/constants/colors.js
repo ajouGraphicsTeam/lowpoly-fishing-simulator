@@ -65,6 +65,11 @@ const COLORS = {
         diffuse: vec4(0.5, 0.7, 0.9, 1.0),
         specular: vec4(0.8, 0.9, 1.0, 1.0)
     },
+    LIGHT_DARK_BLUE: {
+        ambient: vec4(0.1, 0.2, 0.3, 1.0),
+        diffuse: vec4(0.2, 0.4, 0.6, 1.0),
+        specular: vec4(0.4, 0.6, 0.8, 1.0)
+    },
     ORANGE: {
         ambient: vec4(0.5, 0.3, 0.1, 1.0),
         diffuse: vec4(0.9, 0.5, 0.2, 1.0),
@@ -74,6 +79,11 @@ const COLORS = {
         ambient: vec4(0.3, 0.2, 0.1, 1.0),
         diffuse: vec4(0.6, 0.4, 0.2, 1.0),
         specular: vec4(0.8, 0.6, 0.4, 1.0)
+    },
+    WHITE_BRIGHT: {
+        ambient: vec4(1.0, 1.0, 1.0, 1.0),  // 최대 밝기
+        diffuse: vec4(1.0, 1.0, 1.0, 1.0),  // 최대 밝기
+        specular: vec4(1.0, 1.0, 1.0, 1.0)  // 최대 밝기
     }
 }; 
 /*
