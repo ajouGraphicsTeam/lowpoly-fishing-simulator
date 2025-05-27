@@ -42,7 +42,7 @@
         vec3 L = normalize(lightVector);
         
         // 거리 감쇠 팩터 (거리의 제곱에 반비례)
-        float attenuation = 1.0 / (1.0 + 0.001 * distance + 0.0001 * distance * distance);
+        float attenuation = 1.0 / (1.0 + 0.001 * distance + 0.03 * distance * distance);
         */
 
         vec3 E = normalize( -pos );
@@ -88,7 +88,8 @@
       void main() {
         if (useTexture) {
           vec4 texColor = texture2D(texture, fTexCoord);
-          gl_FragColor = fColor * texColor;
+          gl_FragColor = fColor * texColor * 1.5; 
+          // 곱하는데 두개 다 1.0 이하니까 당연히 더 어두워짐. 따라서 1.5 곱해서 밝기 자체를 좀 올려줬음.
         } else {
           gl_FragColor = fColor; // 텍스처 없이 순수한 색상만 사용
         }
@@ -326,12 +327,12 @@
           new Transform()
         );
 
-        // 스카이박스 (배경 하늘)
+        // 스카이박스
         rootManager.rootObject.children["skyBox"] = new SkyBox(
           new Transform()
         );
 
-        // 태양 (30, 30, 30 위치)
+        // 태양
         rootManager.rootObject.children["sun"] = new Sun(
           new Transform({
             position: vec3(30, 30, 30)

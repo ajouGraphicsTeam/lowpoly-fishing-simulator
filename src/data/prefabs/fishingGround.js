@@ -5,7 +5,7 @@ class FishingGround extends PrefabObject {
 
         // 낚시터 바닥
         const groundSize = 50; // 바닥 크기
-        const groundGridSize = 50; // 각 격자의 크기 (작을수록 더 세밀한 텍스처)
+        const groundGridSize = 50; // 각 격자의 크기
         const groundGridCount = groundSize / groundGridSize; // 격자 개수
         
         // 바닥을 격자로 나누어 생성
@@ -18,10 +18,10 @@ class FishingGround extends PrefabObject {
                 const z2 = -groundSize + (j + 1) * groundGridSize;
                 
                 const gridPrimitive = new QuadPrimitive(
-                    vec3(x1, 0.5, z1),    // 뒤쪽 왼쪽
-                    vec3(x1, 0.5, z2),    // 앞쪽 왼쪽
-                    vec3(x2, 0.5, z2),    // 앞쪽 오른쪽
-                    vec3(x2, 0.5, z1)     // 뒤쪽 오른쪽
+                    vec3(x1, 0.5, z1), 
+                    vec3(x1, 0.5, z2),    
+                    vec3(x2, 0.5, z2),    
+                    vec3(x2, 0.5, z1)     
                 );
                 fishingGroundPrimitives.push(gridPrimitive);
             }
@@ -35,10 +35,10 @@ class FishingGround extends PrefabObject {
         );
         
         const fishingGroundSidePrimitive = new QuadPrimitive(
-            vec3(0, 0.5, -groundSize),    // 위쪽 왼쪽
-            vec3(0, -2.0, -groundSize),     // 아래쪽 왼쪽
-            vec3(0, -2.0, groundSize),  // 아래쪽 오른쪽
-            vec3(0, 0.5, groundSize)  // 위쪽 오른쪽
+            vec3(0, 0.5, -groundSize),    
+            vec3(0, -2.0, -groundSize),    
+            vec3(0, -2.0, groundSize),  
+            vec3(0, 0.5, groundSize)  
         );
 
         this.children["fishingGroundSide"] = new HierarchyObject(
