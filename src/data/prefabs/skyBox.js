@@ -7,7 +7,7 @@ class SkyBox extends PrefabObject {
         // Skybox는 카메라를 중심으로 거대한 정육면체를 만들어서 하늘 효과를 냄
         // 카메라가 움직여도 항상 따라다니도록 함
         
-        const skyboxSize = 400; // 매우 큰 크기로 복원
+        const skyboxSize = 100; // 한 변의 길이
         const halfSize = skyboxSize / 2;
         
         // 정육면체의 8개 꼭짓점 정의
@@ -22,7 +22,8 @@ class SkyBox extends PrefabObject {
             vec3(halfSize, halfSize, -halfSize)   // 7: 뒤쪽 오른쪽 위
         ];
         
-        // 각 면을 개별적으로 생성하여 다른 텍스처/색상 적용 가능
+        // 각 면을 개별적으로 생성하여 다른 텍스처/색상 적용 가능 + 법선 벡터 방향 안쪽 향하게 함.
+        var skyTexture = TEXTURES.SKY_TEXTURE;
         
         // 위쪽 면(하늘)
         const topFace = new QuadPrimitive(
@@ -31,9 +32,9 @@ class SkyBox extends PrefabObject {
         this.children["skyTop"] = new HierarchyObject(
             [topFace],
             new Transform(),
-            COLORS.SKY_BLUE,
+            COLORS.LIGHT_BLUE,
             //TEXTURES.GRADIENT_BLUE_CYAN_H // 하늘 그라데이션
-            null
+            skyTexture
         );
         
         // 아래쪽 면
@@ -43,8 +44,8 @@ class SkyBox extends PrefabObject {
         this.children["skyBottom"] = new HierarchyObject(
             [bottomFace],
             new Transform(),
-            COLORS.SKY_BLUE,
-            null
+            COLORS.LIGHT_BLUE,
+            skyTexture
         );
         
         // 앞쪽 면
@@ -56,7 +57,7 @@ class SkyBox extends PrefabObject {
             new Transform(),
             COLORS.LIGHT_BLUE,
             //TEXTURES.GRADIENT_BLUE_CYAN_H // 하늘 그라데이션
-            null
+            skyTexture
         );
         
         // 뒤쪽 면
@@ -68,7 +69,7 @@ class SkyBox extends PrefabObject {
             new Transform(),
             COLORS.LIGHT_BLUE,
             //TEXTURES.GRADIENT_BLUE_CYAN_H // 하늘 그라데이션
-            null
+            skyTexture
         );
         
         // 왼쪽 면
@@ -80,7 +81,7 @@ class SkyBox extends PrefabObject {
             new Transform(),
             COLORS.LIGHT_BLUE,
             //TEXTURES.GRADIENT_BLUE_CYAN_H // 하늘 그라데이션
-            null
+            skyTexture
         );
         
         // 오른쪽 면
@@ -92,13 +93,8 @@ class SkyBox extends PrefabObject {
             new Transform(),
             COLORS.LIGHT_BLUE,
             //TEXTURES.GRADIENT_BLUE_CYAN_H // 하늘 그라데이션
-            null
+            skyTexture
         );
     }
     
-    // 카메라 위치에 따라 skybox 위치를 업데이트하는 메서드
-    updatePosition(cameraPosition) {
-        // skybox는 항상 카메라를 중심으로 위치해야 함
-        this.transform.position = vec3(cameraPosition[0], cameraPosition[1], cameraPosition[2]);
-    }
 } 

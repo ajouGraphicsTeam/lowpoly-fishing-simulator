@@ -22,10 +22,10 @@ const TEXTURES = {
     GRADIENT_BLUE_CYAN_H: null, // 파랑에서 시안으로 수평 그라데이션 (바다 느낌)
 
     // 이미지 파일에서 로드하는 텍스처들
-    GRASS_TEXTURE: null, // grass.png 또는 grass.jpg
-    WATER_TEXTURE: null, // water.png 또는 water.jpg
-    WOOD_TEXTURE: null, // wood.png 또는 wood.jpg
-    STONE_TEXTURE: null, // stone.png 또는 stone.jpg
+    GRASS_TEXTURE: null, // grass.jpg
+    OCEAN_TEXTURE: null, // water.jpg
+    ROBOT_TEXTURE: null, // robot.jpg
+    SKY_TEXTURE: null, // sky.jpg
 };
 
 /**
@@ -96,6 +96,11 @@ function initTextures() {
         }
     }); 
     TEXTURES.ROBOT_TEXTURE = createTextureFromImage(gl, 'src/data/textures/robot.jpg', () => {
+        if (typeof rootManager !== 'undefined' && rootManager.canvasManager) {
+            rootManager.canvasManager.render(); 
+        }
+    }); 
+    TEXTURES.SKY_TEXTURE = createTextureFromImage(gl, 'src/data/textures/sky.jpg', () => {
         if (typeof rootManager !== 'undefined' && rootManager.canvasManager) {
             rootManager.canvasManager.render(); 
         }

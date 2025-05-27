@@ -28,7 +28,23 @@
         // vec3 light = lightPosition.xyz;
         // 이거 아래처럼 해야지 제대로 적용됨
         vec3 light = (uViewMat * lightPosition).xyz;
+        
         vec3 L = normalize( light - pos );
+        // 지금은 거리 감쇠 없이 방향 영향만 받음
+
+        /*
+        // 아래처럼 거리 감쇠를 추가하려 했는데, 거리 감쇠 factor trade off때문에 별로였음...
+        // 오히려 가운데에 있는 낚시대쪽이 너무 어두워짐.
+      
+        // 거리 감쇠 계산 추가
+        vec3 lightVector = light - pos;
+        float distance = length(lightVector);
+        vec3 L = normalize(lightVector);
+        
+        // 거리 감쇠 팩터 (거리의 제곱에 반비례)
+        float attenuation = 1.0 / (1.0 + 0.001 * distance + 0.03 * distance * distance);
+        */
+
         vec3 E = normalize( -pos );
         vec3 H = normalize( L + E ); // halfway vector for Blinn-Phong shading
         vec4 NN = vec4(aVertexNormal, 0);
@@ -40,8 +56,12 @@
         vec4 ambient = ambientProduct;
         float d_val = max( dot(L, N), 0.0 );
         vec4 diffuse = d_val * diffuseProduct;
+        // vec4 diffuse = d_val * diffuseProduct * attenuation;
+
         float s_val = pow( max(dot(N, H), 0.0), shininess );
         vec4 specular = s_val * specularProduct;
+        // vec4 specular = s_val * specularProduct * attenuation;
+
 
         // in case the light source is behind the surface
         if( dot(L, N) < 0.0 ) {
@@ -68,7 +88,8 @@
       void main() {
         if (useTexture) {
           vec4 texColor = texture2D(texture, fTexCoord);
-          gl_FragColor = fColor * texColor;
+          gl_FragColor = fColor * texColor * 1.5; 
+          // 곱하는데 두개 다 1.0 이하니까 당연히 더 어두워짐. 따라서 1.5 곱해서 밝기 자체를 좀 올려줬음.
         } else {
           gl_FragColor = fColor; // 텍스처 없이 순수한 색상만 사용
         }
@@ -109,6 +130,7 @@
     <script type="text/javascript" src="src/data/prefabs/fishingGround.js"></script>
     <script type="text/javascript" src="src/data/prefabs/ocean.js"></script>
     <script type="text/javascript" src="src/data/prefabs/skyBox.js"></script>
+    <script type="text/javascript" src="src/data/prefabs/sun.js"></script>
   </head>
 
   <body>
@@ -305,9 +327,16 @@
           new Transform()
         );
 
-        // 스카이박스 (배경 하늘)
+        // 스카이박스
         rootManager.rootObject.children["skyBox"] = new SkyBox(
           new Transform()
+        );
+
+        // 태양
+        rootManager.rootObject.children["sun"] = new Sun(
+          new Transform({
+            position: vec3(30, 30, 30)
+          })
         );
 
         // 이미지 텍스처는 initTextures()에서 자동으로 로드됩니다
@@ -323,7 +352,6 @@
             parseFloat(light_z.value)
           );
           rootManager.canvasManager.lightingSync();
-          rootManager.canvasManager.render();
         };
 
         setCanvas = (event) => {
@@ -345,7 +373,10 @@
             parseFloat(up_z.value)
           );
 
-          rootManager.canvasManager.render();
+          // 애니메이션이 실행 중이 아닐 때만 직접 렌더링
+          if (!rootManager.animationManager.isPlaying) {
+            rootManager.canvasManager.render();
+          }
         };
 
         document
@@ -375,7 +406,6 @@
 
         frontCamera.addEventListener("click", (event) => {
           resetCamera();
-
           setCanvas();
         });
         sideCamera.addEventListener("click", (event) => {
@@ -436,8 +466,8 @@
           다만 2D 회전의 한계로 마우스 이동만으로 실제 z축 회전을 구현하진 못했음.
           */
           } else if (currentButton === 2) { // right button: rotate camera
-            const horizontalAngle = dx * 0.5;
-            const verticalAngle = dy * 0.5;
+            const horizontalAngle = dx * 0.5/5;
+            const verticalAngle = dy * 0.5/5;
 
             // horizontal rotation(Y axis)
             const rotationY = rotateY(horizontalAngle);
@@ -469,7 +499,11 @@
           at_x.value = rootManager.cameraManager.at.X;
           at_y.value = rootManager.cameraManager.at.Y;
           at_z.value = rootManager.cameraManager.at.Z;
-          setCanvas();
+          setCanvas();          
+          // 애니메이션이 실행 중이 아닐 때만 직접 렌더링
+          if (!rootManager.animationManager.isPlaying) {
+            rootManager.canvasManager.render();
+          }
         }
 
         // 왼쪽 버튼이든 오른쪽 버튼이든 로직은 같음.
@@ -493,7 +527,7 @@
         }
 
         function handleWheel(e) {
-          const delta = e.deltaY * 0.01;
+          const delta = e.deltaY * 0.001*2;
           
           // move camera in the current direction(only distance)
           const viewDirection = subtract(rootManager.cameraManager.at, rootManager.cameraManager.eye);
@@ -509,6 +543,10 @@
           eye_y.value = rootManager.cameraManager.eye.Y;
           eye_z.value = rootManager.cameraManager.eye.Z;
           setCanvas();
+          // 애니메이션이 실행 중이 아닐 때만 직접 렌더링
+          if (!rootManager.animationManager.isPlaying) {
+            rootManager.canvasManager.render();
+          }
         }
 
         // 우클릭 창 나오는 것 방지.

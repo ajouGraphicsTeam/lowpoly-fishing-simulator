@@ -5,8 +5,8 @@ class Ocean extends PrefabObject {
         // 아마 한다면 삼각기둥을 옆으로 눕힌 형태??
 
         // 바다 바닥
-        const oceanSize = 200; // 바다 크기 (크게 확장)
-        const oceanGridSize = 50; // 각 격자의 크기 (작을수록 더 세밀한 텍스처)
+        const oceanSize = 50; // 바닥 크기
+        const oceanGridSize = 50; // 각 격자의 크기
         const oceanGridCount = oceanSize / oceanGridSize; // 격자 개수
         
         // 바다를 격자로 나누어 생성
@@ -19,10 +19,10 @@ class Ocean extends PrefabObject {
                 const z2 = -oceanSize + (j + 1) * oceanGridSize;
                 
                 const oceanGridPrimitive = new QuadPrimitive(
-                    vec3(x1, -2.0, z1), // 앞쪽 왼쪽
-                    vec3(x1, -2.0, z2), // 뒤쪽 왼쪽  
-                    vec3(x2, -2.0, z2), // 뒤쪽 오른쪽 
-                    vec3(x2, -2.0, z1)  // 앞쪽 오른쪽
+                    vec3(x1, -2.0, z1),
+                    vec3(x1, -2.0, z2), 
+                    vec3(x2, -2.0, z2), 
+                    vec3(x2, -2.0, z1)  
                 );
                 oceanBasePrimitives.push(oceanGridPrimitive);
             }
