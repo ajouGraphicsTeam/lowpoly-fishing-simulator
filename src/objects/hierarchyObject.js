@@ -34,6 +34,11 @@ class HierarchyObject {
     this._mergePrimitives();
   }
 
+  /**
+   *
+   * @param {PrimitiveBase} primitives
+   * @param {Transform} transform
+   */
   constructor(primitives = [], transform = new Transform()) {
     this.primitives = primitives;
     this.transform = transform;
@@ -89,5 +94,31 @@ class HierarchyObject {
     );
 
     gl.drawArrays(DRAW_TYPE.TRIANGLE, 0, this._mergedVertices.length);
+  }
+
+  getAnimationFrameFormat(root = true) {
+    const result = {
+      transform:
+        `new Transform({` +
+        ` position: vec3(${this.transform._position}),` +
+        ` rotation: vec3(${this.transform._rotation}),` +
+        ` scale: vec3(${this.transform._scale}),` +
+        ` anchor: vec3(${this.transform._anchor}),` +
+        `})`,
+    };
+
+    if (Object.keys(this.children).length) {
+      result["children"] = {};
+      for (const key in this.children) {
+        result["children"][key] =
+          this.children[key].getAnimationFrameFormat(false);
+      }
+    }
+
+    if (!root) {
+      return result;
+    }
+
+    return JSON.stringify(result, "", 2).replaceAll('"', "");
   }
 }
