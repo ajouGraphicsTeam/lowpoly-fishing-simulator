@@ -31,7 +31,7 @@ class SkyBox extends PrefabObject {
         this.children["skyTop"] = new HierarchyObject(
             [topFace],
             new Transform(),
-            COLORS.SKY_BLUE,
+            COLORS.LIGHT_BLUE,
             //TEXTURES.GRADIENT_BLUE_CYAN_H // 하늘 그라데이션
             null
         );
@@ -43,7 +43,7 @@ class SkyBox extends PrefabObject {
         this.children["skyBottom"] = new HierarchyObject(
             [bottomFace],
             new Transform(),
-            COLORS.SKY_BLUE,
+            COLORS.LIGHT_BLUE,
             null
         );
         
