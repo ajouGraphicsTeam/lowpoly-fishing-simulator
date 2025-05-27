@@ -66,36 +66,12 @@ class RobotArm extends PrefabObject {
 살짝 bvh파일처럼 해석될 수 있는 json 형식을 아래와 같이 정의했어
 
 ```
-[
-  {
-    transform: new Transform(),
-    children: {
-      arm: {
-        transform: new Transform({
-          position: vec3(0, 1, 0),
-          rotation: vec3(0, 0, 30),
-          anchor: vec3(0, 0.5, 0),
-        }),
-        children: {
-          innerArm: {
-            transform: new Transform({
-              position: vec3(0, 1, 0),
-              rotation: vec3(0, 0, 30),
-              anchor: vec3(0, 0.5, 0),
-            }),
-            children: {
-              transform: new Transform({
-                position: vec3(0, 1, 0),
-                rotation: vec3(0, 0, 30),
-                anchor: vec3(0, 0.5, 0),
-              }),
-            },
-          },
-        },
-      },
-    },
-  },
-];
+
+여기에다가는
+(new RobotArm()).getAnimationFrameFormat()
+의 결과값을 넣으면 된다.
+
+
 ```
 위 배열의 값을 초기상태로 60 프래임짜리 애니메이션을 6초 정도 만들고 싶은데 JS로 위와 같은 형식의 배열을 생성할 수 있는 코드를 짜줘
 ````
