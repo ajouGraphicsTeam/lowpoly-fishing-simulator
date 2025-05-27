@@ -20,7 +20,7 @@ function generateSeagullFlappingAnimation() {
     },
     torso: {
       position: [0, 0, 0],
-      rotation: [0, 0, 0],
+      rotation: [0, 90, 0],
       scale: [1, 1, 1],
       anchor: [0, 0, 0],
     },

@@ -1,6 +1,7 @@
 class Seagull extends PrefabObject {
   init() {
     this.animator = new SeagullAnimator(this);
+    this.animator.loop = true;
 
     const torso = new HierarchyObject(
       [BoxPrimitive.fromWHDC(0.3, 0.25, 0.7)],

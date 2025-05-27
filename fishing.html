@@ -129,6 +129,9 @@
       src="src/data/animators/robotArm.js"></script>
     <script type="text/javascript" src="src/data/prefabs/robotArm.js"></script>
 
+    <script
+      type="text/javascript"
+      src="src/data/animators/flyAround.js"></script>
     <script type="text/javascript" src="src/data/animators/seagull.js"></script>
     <script type="text/javascript" src="src/data/prefabs/seagull.js"></script>
 
@@ -314,19 +317,23 @@
         const rootManager = new RootManager();
         rootManager.init();
 
-        // rootManager.rootObject.children["robotArm"] = new RobotArm(
-        //   new Transform({
-        //     position: vec3(0, -0.8, 0),
-        //     rotation: vec3(0, 0, -30),
-        //   })
-        // );
-
-        rootManager.rootObject.children["seagull"] = new Seagull(
+        // 갈매기
+        const seagull = new Seagull(
           new Transform({
-            position: vec3(0, -0.8, 0),
+            position: vec3(0, 15, 0),
             rotation: vec3(0, 0, 0),
           })
         );
+        seagull.flyAnimator = new CircularFlyAnimator(
+          seagull,
+          vec3(-40, 10, -20),
+          vec3(0, 10, 20),
+          60 * 10
+        );
+        seagull.flyAnimator.loop = true;
+        seagull.animator.start();
+        seagull.flyAnimator.start(); // 나중에 시작된게 앞에거에 덮어쓴다
+        rootManager.rootObject.children["seagull"] = seagull;
 
         // 로봇 팔
         rootManager.rootObject.children["robotArm"] = new RobotArm(
