@@ -89,6 +89,9 @@
       type="text/javascript"
       src="src/data/animators/robotArm.js"></script>
     <script type="text/javascript" src="src/data/prefabs/robotArm.js"></script>
+
+    <script type="text/javascript" src="src/data/animators/seagull.js"></script>
+    <script type="text/javascript" src="src/data/prefabs/seagull.js"></script>
   </head>
 
   <body>
@@ -262,7 +265,14 @@
         const rootManager = new RootManager();
         rootManager.init();
 
-        rootManager.rootObject.children["robotArm"] = new RobotArm(
+        // rootManager.rootObject.children["robotArm"] = new RobotArm(
+        //   new Transform({
+        //     position: vec3(0, -0.8, 0),
+        //     rotation: vec3(0, 0, -30),
+        //   })
+        // );
+
+        rootManager.rootObject.children["seagull"] = new Seagull(
           new Transform({
             position: vec3(0, -0.8, 0),
             rotation: vec3(0, 0, -30),
