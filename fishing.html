@@ -28,7 +28,21 @@
         // vec3 light = lightPosition.xyz;
         // 이거 아래처럼 해야지 제대로 적용됨
         vec3 light = (uViewMat * lightPosition).xyz;
-        vec3 L = normalize( light - pos );
+        
+        //vec3 L = normalize( light - pos );
+        // // 지금은 거리 감쇠 없이 방향 영향만 받음
+
+        // 아래처럼 거리 감쇠를 추가하려 했는데, 거리 감쇠 factor trade off때문에 별로였음...
+        // 오히려 가운데에 있는 낚시대쪽이 너무 어두워짐.
+      
+        // 거리 감쇠 계산 추가
+        vec3 lightVector = light - pos;
+        float distance = length(lightVector);
+        vec3 L = normalize(lightVector);
+        
+        // 거리 감쇠 팩터 (거리의 제곱에 반비례)
+        float attenuation = 1.0 / (1.0 + 0.001 * distance + 0.0001 * distance * distance);
+        
         vec3 E = normalize( -pos );
         vec3 H = normalize( L + E ); // halfway vector for Blinn-Phong shading
         vec4 NN = vec4(aVertexNormal, 0);
@@ -39,9 +53,13 @@
         // Compute terms in the illumination equation
         vec4 ambient = ambientProduct;
         float d_val = max( dot(L, N), 0.0 );
-        vec4 diffuse = d_val * diffuseProduct;
+        // vec4 diffuse = d_val * diffuseProduct;
+        vec4 diffuse = d_val * diffuseProduct * attenuation;
+
         float s_val = pow( max(dot(N, H), 0.0), shininess );
-        vec4 specular = s_val * specularProduct;
+        // vec4 specular = s_val * specularProduct;
+        vec4 specular = s_val * specularProduct * attenuation;
+
 
         // in case the light source is behind the surface
         if( dot(L, N) < 0.0 ) {
@@ -109,6 +127,7 @@
     <script type="text/javascript" src="src/data/prefabs/fishingGround.js"></script>
     <script type="text/javascript" src="src/data/prefabs/ocean.js"></script>
     <script type="text/javascript" src="src/data/prefabs/skyBox.js"></script>
+    <script type="text/javascript" src="src/data/prefabs/sun.js"></script>
   </head>
 
   <body>
@@ -310,6 +329,13 @@
           new Transform()
         );
 
+        // 태양 (30, 30, 30 위치)
+        rootManager.rootObject.children["sun"] = new Sun(
+          new Transform({
+            position: vec3(30, 30, 30)
+          })
+        );
+
         // 이미지 텍스처는 initTextures()에서 자동으로 로드됩니다
 
         rootManager.canvasManager.render();
@@ -470,7 +496,7 @@
           at_x.value = rootManager.cameraManager.at.X;
           at_y.value = rootManager.cameraManager.at.Y;
           at_z.value = rootManager.cameraManager.at.Z;
-          
+          setCanvas();          
           // 애니메이션이 실행 중이 아닐 때만 직접 렌더링
           if (!rootManager.animationManager.isPlaying) {
             rootManager.canvasManager.render();
@@ -513,7 +539,7 @@
           eye_x.value = rootManager.cameraManager.eye.X;
           eye_y.value = rootManager.cameraManager.eye.Y;
           eye_z.value = rootManager.cameraManager.eye.Z;
-          
+          setCanvas();
           // 애니메이션이 실행 중이 아닐 때만 직접 렌더링
           if (!rootManager.animationManager.isPlaying) {
             rootManager.canvasManager.render();

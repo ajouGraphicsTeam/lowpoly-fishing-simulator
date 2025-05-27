@@ -2,9 +2,9 @@ class CanvasManager {
   max_length_to_draw = Infinity;
 
   /** lighting */
-  lightPosition = vec4(100.0, 100.0, 100.0, 1.0); // directional light
+  lightPosition = vec4(40.0, 40.0, 40.0, 1.0); // Point light
 
-  lightAmbient = vec4(0.2, 0.2, 0.2, 1.0); // 𝐿𝑎 (dark gray)
+  lightAmbient = vec4(0.5, 0.5, 0.5, 1.0); // 𝐿𝑎 (dark gray-> 밝기 더 올렸음)
   lightDiffuse = vec4(1.0, 1.0, 1.0, 1.0); // 𝐿𝑑 (white)
   lightSpecular = vec4(1.0, 1.0, 1.0, 1.0); // 𝐿𝑠 (white)
 

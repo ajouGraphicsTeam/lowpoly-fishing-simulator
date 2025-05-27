@@ -4,7 +4,7 @@ class FishingGround extends PrefabObject {
         // 이거 무한정으로 반복해서 생성할 수 있나?? 메모리랑 GPU CPU 괜찮나? 확인
 
         // 낚시터 바닥
-        const groundSize = 200; // 바닥 크기
+        const groundSize = 50; // 바닥 크기
         const groundGridSize = 50; // 각 격자의 크기 (작을수록 더 세밀한 텍스처)
         const groundGridCount = groundSize / groundGridSize; // 격자 개수
         

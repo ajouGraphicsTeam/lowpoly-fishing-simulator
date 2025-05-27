@@ -7,7 +7,7 @@ class SkyBox extends PrefabObject {
         // Skybox는 카메라를 중심으로 거대한 정육면체를 만들어서 하늘 효과를 냄
         // 카메라가 움직여도 항상 따라다니도록 함
         
-        const skyboxSize = 400; // 매우 큰 크기로 복원
+        const skyboxSize = 100; // 한 변의 길이
         const halfSize = skyboxSize / 2;
         
         // 정육면체의 8개 꼭짓점 정의
