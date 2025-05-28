@@ -318,22 +318,9 @@
         rootManager.init();
 
         // 갈매기
-        const seagull = new Seagull(
-          new Transform({
-            position: vec3(0, 15, 0),
-            rotation: vec3(0, 0, 0),
-          })
-        );
-        seagull.flyAnimator = new CircularFlyAnimator(
-          seagull,
-          vec3(-40, 10, -20),
-          vec3(0, 10, 20),
-          60 * 10
-        );
-        seagull.flyAnimator.loop = true;
-        seagull.animator.start();
-        seagull.flyAnimator.start(); // 나중에 시작된게 앞에거에 덮어쓴다
-        rootManager.rootObject.children["seagull"] = seagull;
+        rootManager.rootObject.children["seagull"] = createCircularFlySeagull();
+        rootManager.rootObject.children["seagull2"] = createFigure8FlySeagull();
+        rootManager.rootObject.children["seagull3"] = createRandomFlySeagull();
 
         // 로봇 팔
         rootManager.rootObject.children["robotArm"] = new RobotArm(

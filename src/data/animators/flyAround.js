@@ -283,7 +283,7 @@ function generateFigure8MotionAnimation(a, b, numFrames, plane = "XZ") {
     frames.push({
       transform: new Transform({
         position: vec3(currentPos),
-        rotation: vec3(rotationX, rotationY, 0),
+        rotation: vec3(rotationX, -rotationY, 0),
       }),
     });
   }
@@ -327,6 +327,7 @@ function generateRandomMotionAnimation(a, b, numFrames, numWaypoints = 0) {
       )
     );
   }
+  waypoints.push(waypoints[0]); // loop가 되도록 출발지로 돌아옴
 
   let prevPos = null;
   let currentWaypointIndex = 0;
@@ -335,14 +336,14 @@ function generateRandomMotionAnimation(a, b, numFrames, numWaypoints = 0) {
 
   // 마지막 세그먼트가 나머지 프레임을 모두 사용하도록 총 프레임 수 기반으로 계산
   let totalFramesProcessedInSegments = 0;
-  const baseFramesPerSegment = Math.floor(numFrames / (numWaypoints - 1));
+  const baseFramesPerSegment = Math.floor(numFrames / numWaypoints);
 
-  for (let seg = 0; seg < numWaypoints - 1; seg++) {
+  for (let seg = 0; seg < numWaypoints; seg++) {
     p0 = vec3(waypoints[seg]);
     p1 = vec3(waypoints[seg + 1]);
 
     let framesForThisSegment = baseFramesPerSegment;
-    if (seg === numWaypoints - 2) {
+    if (seg === numWaypoints - 1) {
       // 마지막 세그먼트
       framesForThisSegment = numFrames - totalFramesProcessedInSegments;
     }
@@ -407,7 +408,7 @@ function generateRandomMotionAnimation(a, b, numFrames, numWaypoints = 0) {
       frames.push({
         transform: new Transform({
           position: vec3(currentPos),
-          rotation: vec3(rotationX, rotationY, 0),
+          rotation: vec3(rotationX, -rotationY, 0),
         }),
       });
     }
