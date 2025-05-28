@@ -137,6 +137,8 @@
 
     <script type="text/javascript" src="src/data/prefabs/cloud.js"></script>
 
+    <script type="text/javascript" src="src/data/prefabs/fish.js"></script>
+
     <script
       type="text/javascript"
       src="src/data/prefabs/primitiveTestScene.js"></script>
@@ -331,6 +333,11 @@
         rootManager.rootObject.children["seagull"] = createCircularFlySeagull();
         rootManager.rootObject.children["seagull2"] = createFigure8FlySeagull();
         rootManager.rootObject.children["seagull3"] = createRandomFlySeagull();
+
+        // 물고기
+        rootManager.rootObject.children["fish"] = new Fish(
+          new Transform({ position: vec3(0, 5, 0) })
+        );
 
         // 로봇 팔
         rootManager.rootObject.children["robotArm"] = new RobotArm(
