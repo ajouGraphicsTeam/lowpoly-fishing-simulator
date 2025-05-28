@@ -5,7 +5,7 @@ class Fish extends PrefabObject {
     const head = new FishHead(
       new Transform({
         position: vec3(0, 0, 0), // FishHead의 기준 위치
-        rotation: vec3(-90, 0, 0),
+        rotation: vec3(-90, -180, 0),
       })
     );
 
@@ -164,4 +164,76 @@ class FishTail extends PrefabObject {
       lastTailSegmentLength = l; // 마지막 마디의 길이를 저장해둘 필요는 현재 없음
     });
   }
+}
+
+/**
+ * a ~ b 범위를 원형으로 돌아다니는 갈매기
+ * @param {vec3} a range start
+ * @param {vec3} b range end
+ * @param {number} frame  60 * sec를 추천
+ * @param {'XZ'|'XY'|'YZ'} plane - 원형 운동을 할 평면 (기본값 'XZ')
+ *
+ * @returns {Fish}
+ */
+function createCircularSwimFish(
+  a = vec3(-40, 0, -20),
+  b = vec3(0, 0, 20),
+  frame = 60 * 10,
+  plane = "XZ"
+) {
+  const fish = new Fish();
+  fish.flyAnimator = new CircularFlyAnimator(fish, a, b, frame, plane);
+  fish.flyAnimator.loop = true;
+  fish.animator.start();
+  fish.flyAnimator.start(); // 나중에 시작된게(현재 Animator) 앞에거(FishAnimator)를 덮어쓴다
+
+  return fish;
+}
+
+/**
+ * a ~ b 범위를 8자 모양으로 돌아다니는 갈매기
+ * @param {vec3} a range start
+ * @param {vec3} b range end
+ * @param {number} frame  60 * sec를 추천
+ * @param {'XZ'|'XY'|'YZ'} plane - 8자 운동을 할 평면 (기본값 'XZ')
+ *
+ * @returns {Fish}
+ */
+function createFigure8SwimFish(
+  a = vec3(-40, 0, -20),
+  b = vec3(0, 0, 20),
+  frame = 60 * 10,
+  plane = "XZ"
+) {
+  const fish = new Fish();
+  fish.flyAnimator = new Figure8FlyAnimator(fish, a, b, frame, plane);
+  fish.flyAnimator.loop = true;
+  fish.animator.start();
+  fish.flyAnimator.start(); // 나중에 시작된게(현재 Animator) 앞에거(FishAnimator)를 덮어쓴다
+
+  return fish;
+}
+
+/**
+ * a ~ b 범위를 무작위로 돌아다니는 갈매기
+ * @param {vec3} a range start
+ * @param {vec3} b range end
+ * @param {number} frame  60 * sec를 추천
+ * @param {number} numWaypoints - 생성할 경유지점 수 (0이면 자동 계산)
+ *
+ * @returns {Fish}
+ */
+function createRandomSwimFish(
+  a = vec3(-40, 0, -20),
+  b = vec3(0, 0, 20),
+  frame = 60 * 10,
+  numWaypoints = 0
+) {
+  const fish = new Fish();
+  fish.flyAnimator = new RandomFlyAnimator(fish, a, b, frame, numWaypoints);
+  fish.flyAnimator.loop = true;
+  fish.animator.start();
+  fish.flyAnimator.start(); // 나중에 시작된게(현재 Animator) 앞에거(FishAnimator)를 덮어쓴다
+
+  return fish;
 }

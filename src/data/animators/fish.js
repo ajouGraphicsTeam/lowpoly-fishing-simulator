@@ -25,7 +25,7 @@ function generateFishSwimmingAnimation() {
       head: {
         transform: {
           position: [0, 0, 0],
-          rotation: [-90, 0, 0],
+          rotation: [-90, -180, 0],
           scale: [1, 1, 1],
           anchor: [0, 0, 0],
         },
