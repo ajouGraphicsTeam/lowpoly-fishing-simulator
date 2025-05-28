@@ -138,6 +138,7 @@
     <script type="text/javascript" src="src/data/prefabs/cloud.js"></script>
 
     <script type="text/javascript" src="src/data/prefabs/fish.js"></script>
+    <script type="text/javascript" src="src/data/animators/fish.js"></script>
 
     <script
       type="text/javascript"
@@ -338,6 +339,7 @@
         rootManager.rootObject.children["fish"] = new Fish(
           new Transform({ position: vec3(0, 5, 0) })
         );
+        rootManager.rootObject.children["fish"].animator.start();
 
         // 로봇 팔
         rootManager.rootObject.children["robotArm"] = new RobotArm(

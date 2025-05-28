@@ -20,6 +20,9 @@ class Fish extends PrefabObject {
 
     this.children["head"] = head;
     head.children["body"] = body; // 사용자의 계층 구조: Fish -> Head -> Body
+
+    this.animator = new FishAnimator(this);
+    this.animator.loop = true;
   }
 }
 
