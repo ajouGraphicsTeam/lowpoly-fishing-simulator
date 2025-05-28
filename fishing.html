@@ -135,6 +135,8 @@
     <script type="text/javascript" src="src/data/animators/seagull.js"></script>
     <script type="text/javascript" src="src/data/prefabs/seagull.js"></script>
 
+    <script type="text/javascript" src="src/data/prefabs/cloud.js"></script>
+
     <script
       type="text/javascript"
       src="src/data/prefabs/primitiveTestScene.js"></script>
@@ -316,6 +318,14 @@
       <script id="main">
         const rootManager = new RootManager();
         rootManager.init();
+
+        // 구름
+        for (i = 0; i < 10; i++) {
+          rootManager.rootObject.children[`cloud${i}`] = createFigure8FlyCloud(
+            vec3(-40 + i, 10 + Math.random() * 5, -20 + Math.random() * 5),
+            vec3(-41 + i, 10 + Math.random() * 5, 20 + Math.random() * 5)
+          );
+        }
 
         // 갈매기
         rootManager.rootObject.children["seagull"] = createCircularFlySeagull();
