@@ -139,6 +139,7 @@
     <script type="text/javascript" src="src/data/prefabs/seagull.js"></script>
 
     <script type="text/javascript" src="src/data/prefabs/cloud.js"></script>
+    <script type="text/javascript" src="src/data/prefabs/apartment.js"></script>
 
     <script type="text/javascript" src="src/data/prefabs/fish.js"></script>
     <script type="text/javascript" src="src/data/animators/fish.js"></script>
@@ -350,6 +351,20 @@
 
         // 로봇 팔
         rootManager.rootObject.children["robotArm"] = new RobotArm();
+
+        // Apartment
+        for (i = 0; i < 3; i++) {
+          for (j = 0; j < 9; j++) {
+            rootManager.rootObject.children[`apartment_${i}_${j}`] =
+              new Apartment(
+                new Transform({
+                  position: vec3(25 + 10 * i, 5.55, -40 + j * 10),
+                  rotation: vec3(0, -90, 0),
+                  scale: vec3(5, 5, 5),
+                })
+              );
+          }
+        }
 
         // Primitive 테스트
         rootManager.rootObject.children["primitiveTestScene"] =
