@@ -16,7 +16,12 @@ class Cloud extends PrefabObject {
    */
   init(type) {
     type = type ?? Math.floor(Math.random() * CloudPrimitives.length);
-    this.primitives = CloudPrimitives[type];
+    this.children["cloud"] = new HierarchyObject(
+      CloudPrimitives[type],
+      new Transform({
+        scale: vec3(4, 1, 3),
+      })
+    );
   }
 }
 
@@ -33,7 +38,7 @@ class Cloud extends PrefabObject {
 function createFigure8FlyCloud(
   a = vec3(-40, 10, -20),
   b = vec3(-41, 10, 20),
-  frame = 60 * 20,
+  frame = 60 * 50,
   plane = "XZ",
   cloudType = null
 ) {
