@@ -144,6 +144,39 @@ class BoxPrimitive extends PrimitiveBase {
       left.texCoords
     );
   }
+
+  /**
+   *
+   * Creates vertices for a box centered at a point, or origin.
+   * Vertex order: FTL, FTR, FBR, FBL, BTL, BTR, BBR, BBL
+   * (FrontTopLeft, FrontTopRight, FrontBottomRight, FrontBottomLeft, ...)
+   * This order should be compatible with the previously discussed BoxPrimitive.
+   *
+   * @param {float} width
+   * @param {float} height
+   * @param {float} depth
+   * @param {vec3} center = vec3(0, 0, 0)
+   *
+   */
+  static fromWHDC(width, height, depth, center = vec3(0, 0, 0)) {
+    const hw = width / 2;
+    const hh = height / 2;
+    const hd = depth / 2;
+    const cx = center[0];
+    const cy = center[1];
+    const cz = center[2];
+
+    return new BoxPrimitive([
+      vec3(cx - hw, cy + hh, cz + hd), // 0: Front-Top-Left
+      vec3(cx + hw, cy + hh, cz + hd), // 1: Front-Top-Right
+      vec3(cx + hw, cy - hh, cz + hd), // 2: Front-Bottom-Right
+      vec3(cx - hw, cy - hh, cz + hd), // 3: Front-Bottom-Left
+      vec3(cx - hw, cy + hh, cz - hd), // 4: Back-Top-Left
+      vec3(cx + hw, cy + hh, cz - hd), // 5: Back-Top-Right
+      vec3(cx + hw, cy - hh, cz - hd), // 6: Back-Bottom-Right
+      vec3(cx - hw, cy - hh, cz - hd), // 7: Back-Bottom-Left
+    ]);
+  }
 }
 
 class TrianglePrimitive extends PrimitiveBase {

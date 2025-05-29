@@ -47,7 +47,20 @@ class HierarchyObject {
     this._mergePrimitives();
   }
 
-  constructor(primitives = [], transform = new Transform(), color = COLORS.DARK_YELLOW, texture = null) { // default color: dark yellow, default texture: null
+  /**
+   *
+   * @param {PrimitiveBase} primitives
+   * @param {Transform} transform
+   * @param {COLORS} color
+   * @param {WebGLTexture} texture
+   */
+  constructor(
+    primitives = [],
+    transform = new Transform(),
+    color = COLORS.DARK_YELLOW,
+    texture = null
+  ) {
+    // default color: dark yellow, default texture: null
     this.primitives = primitives;
     this.transform = transform;
     this.color = color;
@@ -92,7 +105,8 @@ class HierarchyObject {
     );
     gl.uniformMatrix4fv(modelViewMatLoc, false, flatten(frameMat));
 
-    if (this.color) { // 여기서 색상 정해줌
+    if (this.color) {
+      // 여기서 색상 정해줌
       rootManager.canvasManager.materialAmbient = this.color.ambient;
       rootManager.canvasManager.materialDiffuse = this.color.diffuse;
       rootManager.canvasManager.materialSpecular = this.color.specular;
@@ -129,11 +143,40 @@ class HierarchyObject {
       this._mergedTexCoords.flatten(),
       gl.STATIC_DRAW
     );
-    
-    var vTexCoord = gl.getAttribLocation(rootManager.canvasManager.program, "vTexCoord");
+
+    var vTexCoord = gl.getAttribLocation(
+      rootManager.canvasManager.program,
+      "vTexCoord"
+    );
     gl.vertexAttribPointer(vTexCoord, 2, gl.FLOAT, false, 0, 0);
     gl.enableVertexAttribArray(vTexCoord);
 
     gl.drawArrays(DRAW_TYPE.TRIANGLE, 0, this._mergedVertices.length);
+  }
+
+  getAnimationFrameFormat(root = true) {
+    const result = {
+      transform:
+        `new Transform({` +
+        ` position: vec3(${this.transform._position}),` +
+        ` rotation: vec3(${this.transform._rotation}),` +
+        ` scale: vec3(${this.transform._scale}),` +
+        ` anchor: vec3(${this.transform._anchor}),` +
+        `})`,
+    };
+
+    if (Object.keys(this.children).length) {
+      result["children"] = {};
+      for (const key in this.children) {
+        result["children"][key] =
+          this.children[key].getAnimationFrameFormat(false);
+      }
+    }
+
+    if (!root) {
+      return result;
+    }
+
+    return JSON.stringify(result, "", 2).replaceAll('"', "");
   }
 }
