@@ -1,5 +1,5 @@
 class RobotArmAnimator extends Animator {
-  animationData = generateRobotArmAnimationData();
+  animationData = createCastingAnimationFrames(240);
 }
 
 /**
@@ -117,4 +117,428 @@ function generateRobotArmAnimationData() {
   }
 
   return animationFrames;
+}
+
+/**
+ * Linear interpolation function.
+ * @param {number} start Start value.
+ * @param {number} end End value.
+ * @param {number} t Interpolation factor (0 to 1).
+ * @returns {number} Interpolated value.
+ */
+function lerp(start, end, t) {
+  return start * (1 - t) + end * t;
+}
+
+/**
+ * Creates the full hierarchical pose for a single frame with new Transform instances.
+ * This function is called for every frame to ensure fresh Transform objects.
+ */
+function createFreshPose() {
+  // This structure must exactly match your RobotArm and FishingRod hierarchy definition
+  return {
+    transform: new Transform({
+      position: vec3(0, 0, 0),
+      rotation: vec3(0, 0, 0),
+      scale: vec3(1, 1, 1),
+      anchor: undefined,
+    }),
+    children: {
+      arm: {
+        transform: new Transform({
+          position: vec3(0, 0, 0),
+          rotation: vec3(0, 0, 0),
+          scale: vec3(1, 1, 1),
+          anchor: undefined,
+        }),
+        children: {
+          innerArm: {
+            // First innerArm (connected to base arm)
+            transform: new Transform({
+              position: vec3(0, 1, 0),
+              rotation: vec3(0, 0, 30),
+              scale: vec3(1, 1, 1),
+              anchor: vec3(0, 0.5, 0),
+            }),
+            children: {
+              innerArm: {
+                // Second innerArm (end effector, holds fishingRod)
+                transform: new Transform({
+                  position: vec3(0, 1, 0),
+                  rotation: vec3(0, 0, 30),
+                  scale: vec3(1, 1, 1),
+                  anchor: vec3(0, 0.5, 0),
+                }),
+                children: {
+                  fishingRod: {
+                    transform: new Transform({
+                      position: vec3(0, 0, 0),
+                      rotation: vec3(0, 0, 0),
+                      scale: vec3(1, 1, 1),
+                      anchor: undefined,
+                    }),
+                    children: {
+                      rod: {
+                        transform: new Transform({
+                          position: vec3(0, 0.4, 0),
+                          rotation: vec3(0, 0, 20),
+                          scale: vec3(1, 1, 1),
+                          anchor: vec3(0, 0.3, 0),
+                        }),
+                        children: {
+                          line_0: {
+                            transform: new Transform({
+                              position: vec3(0, 2, 0),
+                              rotation: vec3(0, 0, 45),
+                              scale: vec3(1, 1, 1),
+                              anchor: vec3(0, 2, 0),
+                            }),
+                            children: {
+                              line_1: {
+                                transform: new Transform({
+                                  position: vec3(0, 0.2, 0),
+                                  rotation: vec3(0, 0, 5),
+                                  scale: vec3(1, 1, 1),
+                                  anchor: vec3(0, 0.2, 0),
+                                }),
+                                children: {
+                                  line_2: {
+                                    transform: new Transform({
+                                      position: vec3(0, 0.2, 0),
+                                      rotation: vec3(0, 0, 5),
+                                      scale: vec3(1, 1, 1),
+                                      anchor: vec3(0, 0.2, 0),
+                                    }),
+                                    children: {
+                                      line_3: {
+                                        transform: new Transform({
+                                          position: vec3(0, 0.2, 0),
+                                          rotation: vec3(0, 0, 5),
+                                          scale: vec3(1, 1, 1),
+                                          anchor: vec3(0, 0.2, 0),
+                                        }),
+                                        children: {
+                                          line_4: {
+                                            transform: new Transform({
+                                              position: vec3(0, 0.2, 0),
+                                              rotation: vec3(0, 0, 5),
+                                              scale: vec3(1, 1, 1),
+                                              anchor: vec3(0, 0.2, 0),
+                                            }),
+                                            children: {
+                                              line_5: {
+                                                transform: new Transform({
+                                                  position: vec3(0, 0.2, 0),
+                                                  rotation: vec3(0, 0, 5),
+                                                  scale: vec3(1, 1, 1),
+                                                  anchor: vec3(0, 0.2, 0),
+                                                }),
+                                                children: {
+                                                  line_6: {
+                                                    transform: new Transform({
+                                                      position: vec3(0, 0.2, 0),
+                                                      rotation: vec3(0, 0, 5),
+                                                      scale: vec3(1, 1, 1),
+                                                      anchor: vec3(0, 0.2, 0),
+                                                    }),
+                                                    children: {
+                                                      line_7: {
+                                                        transform:
+                                                          new Transform({
+                                                            position: vec3(
+                                                              0,
+                                                              0.2,
+                                                              0
+                                                            ),
+                                                            rotation: vec3(
+                                                              0,
+                                                              0,
+                                                              5
+                                                            ),
+                                                            scale: vec3(
+                                                              1,
+                                                              1,
+                                                              1
+                                                            ),
+                                                            anchor: vec3(
+                                                              0,
+                                                              0.2,
+                                                              0
+                                                            ),
+                                                          }),
+                                                        children: {
+                                                          line_8: {
+                                                            transform:
+                                                              new Transform({
+                                                                position: vec3(
+                                                                  0,
+                                                                  0.2,
+                                                                  0
+                                                                ),
+                                                                rotation: vec3(
+                                                                  0,
+                                                                  0,
+                                                                  5
+                                                                ),
+                                                                scale: vec3(
+                                                                  1,
+                                                                  1,
+                                                                  1
+                                                                ),
+                                                                anchor: vec3(
+                                                                  0,
+                                                                  0.2,
+                                                                  0
+                                                                ),
+                                                              }),
+                                                            children: {
+                                                              line_9: {
+                                                                transform:
+                                                                  new Transform(
+                                                                    {
+                                                                      position:
+                                                                        vec3(
+                                                                          0,
+                                                                          0.2,
+                                                                          0
+                                                                        ),
+                                                                      rotation:
+                                                                        vec3(
+                                                                          0,
+                                                                          0,
+                                                                          5
+                                                                        ),
+                                                                      scale:
+                                                                        vec3(
+                                                                          1,
+                                                                          1,
+                                                                          1
+                                                                        ),
+                                                                      anchor:
+                                                                        vec3(
+                                                                          0,
+                                                                          0.2,
+                                                                          0
+                                                                        ),
+                                                                    }
+                                                                  ),
+                                                                children: {
+                                                                  bait: {
+                                                                    transform:
+                                                                      new Transform(
+                                                                        {
+                                                                          position:
+                                                                            vec3(
+                                                                              0,
+                                                                              0.2,
+                                                                              0
+                                                                            ),
+                                                                          rotation:
+                                                                            vec3(
+                                                                              0,
+                                                                              0,
+                                                                              0
+                                                                            ),
+                                                                          scale:
+                                                                            vec3(
+                                                                              1,
+                                                                              1,
+                                                                              1
+                                                                            ),
+                                                                          anchor:
+                                                                            vec3(
+                                                                              0,
+                                                                              0,
+                                                                              0
+                                                                            ),
+                                                                        }
+                                                                      ),
+                                                                  },
+                                                                },
+                                                              },
+                                                            },
+                                                          },
+                                                        },
+                                                      },
+                                                    },
+                                                  },
+                                                },
+                                              },
+                                            },
+                                          },
+                                        },
+                                      },
+                                    },
+                                  },
+                                },
+                              },
+                            },
+                          },
+                        },
+                      },
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
+    },
+  };
+}
+
+/**
+ * Generates frames for the "casting" animation.
+ * Total duration: 4 seconds (240 frames at 60 FPS).
+ * @returns {Array<Object>} An array of frame pose objects.
+ */
+function createCastingAnimationFrames() {
+  const frames = [];
+  const totalDurationSeconds = 4.0; // 8초로 변경
+  const fps = 60;
+  const numFrames = totalDurationSeconds * fps; // 240 프레임
+
+  // Initial Z rotations from the default pose for reference
+  const initialArm1RotZ = 30;
+  const initialArm2RotZ = 30;
+  const initialRodRotZ = 20;
+  const initialLine0RotZ = 45;
+  const initialLineXRotZ = 5; // For line_1 through line_9
+
+  // Durations for each phase (총 4초에 맞게 비율 조정)
+  const windUpDuration = 0.2 * numFrames; // 0.8초
+  const forwardSwingDuration = 0.2 * numFrames; // 0.8초
+  const lineFlyOutDuration = 0.2 * numFrames; // 0.8초
+  const lineSettleDuration =
+    numFrames - (windUpDuration + forwardSwingDuration + lineFlyOutDuration); // 나머지 1.6초
+
+  for (let i = 0; i < numFrames; i++) {
+    let currentFramePose = createFreshPose(); // Create a fresh pose for each frame
+
+    // Get references to the transform objects we'll be animating
+    let armTransform = currentFramePose.children.arm.transform; // Base arm
+    let innerArm1Transform =
+      currentFramePose.children.arm.children.innerArm.transform; // First innerArm
+    let innerArm2Transform =
+      currentFramePose.children.arm.children.innerArm.children.innerArm
+        .transform; // Second innerArm
+    let rodTransform =
+      currentFramePose.children.arm.children.innerArm.children.innerArm.children
+        .fishingRod.children.rod.transform;
+
+    let lineTransforms = [];
+    let currentLineParent =
+      currentFramePose.children.arm.children.innerArm.children.innerArm.children
+        .fishingRod.children.rod;
+    for (let j = 0; j < 10; j++) {
+      // line_0 to line_9
+      const lineSegment = currentLineParent.children[`line_${j}`];
+      lineTransforms.push(lineSegment.transform);
+      currentLineParent = lineSegment;
+    }
+    let baitTransform = currentLineParent.children["bait"].transform;
+
+    let armRotZ, arm1RotZ, arm2RotZ, rodRotZ, line0RotZ;
+    let lineXRotZ = new Array(9).fill(0); // For line_1 to line_9
+    let lineXScaleY = new Array(10).fill(1.0); // For line_0 to line_9
+
+    if (i < windUpDuration) {
+      // Phase 1: Wind-up
+      const phaseT = i / (windUpDuration - 1);
+      armRotZ = lerp(0, -30, phaseT); // Base arm also winds up slightly
+      arm1RotZ = lerp(initialArm1RotZ, -15, phaseT);
+      arm2RotZ = lerp(initialArm2RotZ, -25, phaseT);
+      rodRotZ = lerp(initialRodRotZ, -60, phaseT); // Increased wind-back for rod
+      line0RotZ = lerp(initialLine0RotZ, -60, phaseT);
+      for (let k = 0; k < 9; k++)
+        lineXRotZ[k] = lerp(initialLineXRotZ, -15, phaseT); // Lines curl back more
+      for (let k = 0; k < 10; k++) lineXScaleY[k] = 1.0;
+    } else if (i < windUpDuration + forwardSwingDuration) {
+      // Phase 2: Forward Swing & Release
+      const phaseT = (i - windUpDuration) / (forwardSwingDuration - 1);
+      armRotZ = lerp(-30, 10, phaseT); // Base arm swings forward
+      arm1RotZ = lerp(-15, 10, phaseT);
+      arm2RotZ = lerp(-25, 10, phaseT);
+      rodRotZ = lerp(-60, 20, phaseT); // Rod swings very fast and high
+      line0RotZ = lerp(-60, 20, phaseT); // Line_0 projects forward sharply
+      for (let k = 0; k < 9; k++) lineXRotZ[k] = lerp(-15, 2, phaseT); // Lines start to straighten rapidly
+      for (let k = 0; k < 10; k++) lineXScaleY[k] = 1.0;
+    } else if (i < windUpDuration + forwardSwingDuration + lineFlyOutDuration) {
+      // Phase 3a: Line Flies Out, Extends, Straightens
+      const phaseT =
+        (i - (windUpDuration + forwardSwingDuration)) /
+        (lineFlyOutDuration - 1);
+      armRotZ = lerp(10, 15, phaseT); // Base arm begins to settle
+      arm1RotZ = lerp(10, 15, phaseT); // Arm begins to settle
+      arm2RotZ = lerp(10, 15, phaseT); // End effector begins to settle
+      rodRotZ = lerp(20, 25, phaseT); // Rod settles to a casting angle
+      line0RotZ = lerp(20, 35, phaseT); // Line_0 angle settles, still projecting
+      for (let k = 0; k < 9; k++) lineXRotZ[k] = lerp(2, 1, phaseT); // Lines become very straight
+      for (let k = 0; k < 10; k++) lineXScaleY[k] = lerp(1.0, 1.5, phaseT); // Lines extend to 1.5x length
+      baitTransform.scale = vec3(1, 1 / lerp(1.0, 1.5, phaseT) ** 10, 1); // scale을 적용시켰더니 하위에도 적요이 되어서 상쇄 시키기
+    } else {
+      // Phase 3b: Line Settles with Gravity
+      const phaseT =
+        (i - (windUpDuration + forwardSwingDuration + lineFlyOutDuration)) /
+        (lineSettleDuration - 1);
+      armRotZ = lerp(15, 10, phaseT); // Base arm fully settles
+      arm1RotZ = lerp(15, 20, phaseT); // Arm fully settles
+      arm2RotZ = lerp(15, 20, phaseT); // End effector fully settles
+      rodRotZ = lerp(25, 30, phaseT); // Rod fully settles
+      line0RotZ = lerp(35, 45, phaseT); // Line_0 shows some droop
+      for (let k = 0; k < 9; k++) {
+        // Segments further out (larger k) droop more
+        lineXRotZ[k] = lerp(1, initialLineXRotZ + k * 1.8, phaseT);
+      }
+      for (let k = 0; k < 10; k++) lineXScaleY[k] = 2.5; // Lines remain extended
+    }
+
+    armTransform.rotation = vec3(
+      armTransform.rotation.X,
+      armTransform.rotation.Y,
+      armRotZ
+    );
+    innerArm1Transform.rotation = vec3(
+      innerArm1Transform.rotation.X,
+      innerArm1Transform.rotation.Y,
+      arm1RotZ
+    );
+    innerArm2Transform.rotation = vec3(
+      innerArm2Transform.rotation.X,
+      innerArm2Transform.rotation.Y,
+      arm2RotZ
+    );
+    rodTransform.rotation = vec3(
+      rodTransform.rotation.X,
+      rodTransform.rotation.Y,
+      rodRotZ
+    );
+
+    lineTransforms[0].rotation = vec3(
+      lineTransforms[0].rotation.X,
+      lineTransforms[0].rotation.Y,
+      line0RotZ
+    );
+    lineTransforms[0].scale = vec3(
+      lineTransforms[0].scale.X,
+      lineXScaleY[0],
+      lineTransforms[0].scale.Z
+    );
+
+    for (let j = 1; j < 10; j++) {
+      lineTransforms[j].rotation = vec3(
+        lineTransforms[j].rotation.X,
+        lineTransforms[j].rotation.Y,
+        lineXRotZ[j - 1]
+      );
+      lineTransforms[j].scale = vec3(
+        lineTransforms[j].scale.X,
+        lineXScaleY[j],
+        lineTransforms[j].scale.Z
+      );
+    }
+    frames.push(currentFramePose);
+  }
+  return frames;
 }
