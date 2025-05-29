@@ -16,10 +16,10 @@ function generateFishSwimmingAnimation() {
   // 사용자가 제공한 JSON 구조와 값을 기반으로 한 초기 포즈 데이터 (수치 배열 사용)
   const fishBasePose = {
     transform: {
-      position: [0, 5, 0],
-      rotation: [0, 0, 0],
+      position: [-0.24, 0, 0],
+      rotation: [0, 0, -90],
       scale: [1, 1, 1],
-      anchor: [0, 5, 0],
+      anchor: [0, 0, 0],
     },
     children: {
       head: {

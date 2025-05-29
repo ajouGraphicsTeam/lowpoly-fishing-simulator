@@ -317,22 +317,35 @@
                 onclick="rootManager.rootObject.children.robotArm.animator.start()">
                 robotArm wave
               </button>
-              <button
-                class="border px-1"
-                onclick="rootManager.rootObject.children.robotArm.castingAnimator.start()">
+              <button class="border px-1" onclick="fishingStart()">
                 낚시 시작
               </button>
-              <button
-                class="border px-1"
-                onclick="rootManager.rootObject.children.robotArm.reelingAnimator.start()">
-                낚기
-              </button>
+              <button class="border px-1" onclick="reelingStart()">낚기</button>
             </div>
           </div>
         </div>
       </div>
 
       <script id="main">
+        const fishingStart = () => {
+          robotArm.fishingRod.bait.children = {};
+          robotArm.castingAnimator.start();
+        };
+        const reelingStart = () => {
+          // 성공확률 30퍼
+          if (Math.random() > 0.7) {
+            const _fish = new Fish(new Transform((position = vec3(0, 4, 0))));
+            _fish.animator.start();
+            robotArm.fishingRod.bait.children = {
+              fish: _fish,
+            };
+
+            console.log(robotArm.fishingRod);
+            console.log(robotArm.fishingRod.bait);
+          }
+          robotArm.reelingAnimator.start();
+        };
+
         const rootManager = new RootManager();
         rootManager.init();
 
@@ -352,7 +365,8 @@
         }
 
         // 로봇 팔
-        rootManager.rootObject.children["robotArm"] = new RobotArm();
+        const robotArm = new RobotArm();
+        rootManager.rootObject.children["robotArm"] = robotArm;
 
         // 구름
         for (i = 0; i < 10; i++) {

@@ -18,6 +18,11 @@ class RobotArmIdleFishingAnimator extends Animator {
 
 class RobotArmReelingAnimator extends Animator {
   animationData = createReelingAnimationFrames(240);
+
+  start() {
+    this.object.idleAnimator.stop();
+    super.start();
+  }
 }
 
 /**

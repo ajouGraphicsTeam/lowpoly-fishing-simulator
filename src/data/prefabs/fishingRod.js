@@ -38,7 +38,7 @@ class FishingRod extends PrefabObject {
     });
 
     // 미끼
-    parent.children["bait"] = new HierarchyObject(
+    this.bait = new HierarchyObject(
       [new PrismPrimitive(vec3(0, 0, 0), 0.08, 0.15, 8)],
       new Transform({
         position: vec3(0, len / numOfLine, 0),
@@ -48,6 +48,7 @@ class FishingRod extends PrefabObject {
       COLORS.RED,
       null
     );
+    parent.children["bait"] = this.bait;
 
     this.children["rod"] = _rod;
   }

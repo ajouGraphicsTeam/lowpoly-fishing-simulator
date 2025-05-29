@@ -53,8 +53,9 @@ class RobotArm extends PrefabObject {
     };
 
     // 낚시대
+    this.fishingRod = new FishingRod();
     _arm.children["innerArm"].children["innerArm"].children = {
-      fishingRod: new FishingRod(),
+      fishingRod: this.fishingRod,
     };
 
     this.children = {
