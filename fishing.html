@@ -124,12 +124,24 @@
     <!-- DATAS -->
     <script
       type="text/javascript"
+      src="src/data/prefabs/fishingRod.js"></script>
+    <script
+      type="text/javascript"
       src="src/data/animators/robotArm.js"></script>
     <script type="text/javascript" src="src/data/prefabs/robotArm.js"></script>
 
+    <script
+      type="text/javascript"
+      src="src/data/animators/flyAround.js"></script>
     <script type="text/javascript" src="src/data/animators/seagull.js"></script>
     <script type="text/javascript" src="src/data/prefabs/seagull.js"></script>
 
+    <script type="text/javascript" src="src/data/prefabs/cloud.js"></script>
+    <script type="text/javascript" src="src/data/prefabs/apartment.js"></script>
+
+    <script type="text/javascript" src="src/data/prefabs/fish.js"></script>
+    <script type="text/javascript" src="src/data/animators/fish.js"></script>
+    
     <script
       type="text/javascript"
       src="src/data/prefabs/primitiveTestScene.js"></script>
@@ -303,36 +315,89 @@
                 onclick="rootManager.rootObject.children.robotArm.animator.start()">
                 robotArm wave
               </button>
+              <button class="border px-1" onclick="fishingStart()">
+                낚시 시작
+              </button>
+              <button class="border px-1" onclick="reelingStart()">낚기</button>
             </div>
           </div>
         </div>
       </div>
 
       <script id="main">
+        const fishingStart = () => {
+          robotArm.fishingRod.bait.children = {};
+          robotArm.castingAnimator.start();
+        };
+        const reelingStart = () => {
+          // 성공확률 30퍼
+          if (Math.random() > 0.7) {
+            const _fish = new Fish(new Transform((position = vec3(0, 4, 0))));
+            _fish.animator.start();
+            robotArm.fishingRod.bait.children = {
+              fish: _fish,
+            };
+
+            console.log(robotArm.fishingRod);
+            console.log(robotArm.fishingRod.bait);
+          }
+          robotArm.reelingAnimator.start();
+        };
+
         const rootManager = new RootManager();
         rootManager.init();
 
-        // rootManager.rootObject.children["robotArm"] = new RobotArm(
-        //   new Transform({
-        //     position: vec3(0, -0.8, 0),
-        //     rotation: vec3(0, 0, -30),
-        //   })
-        // );
+        // 갈매기
+        rootManager.rootObject.children["seagull"] = createCircularFlySeagull();
+        rootManager.rootObject.children["seagull2"] = createFigure8FlySeagull();
+        rootManager.rootObject.children["seagull3"] = createRandomFlySeagull();
 
-        rootManager.rootObject.children["seagull"] = new Seagull(
-          new Transform({
-            position: vec3(0, -0.8, 0),
-            rotation: vec3(0, 0, 0),
-          })
-        );
+        // 물고기
+        for (i = 0; i < 5; i++) {
+          rootManager.rootObject.children[`fish${i}`] = createRandomSwimFish(
+            vec3(-40 + i, Math.random() * -1, -20 + Math.random() * 5),
+            vec3(0 + i, Math.random() * -1, 20 + Math.random() * 5),
+            60 * 40 + Math.floor(Math.random() * 60 * 3),
+            4 + Math.floor(Math.random() * 3)
+          );
+        }
 
         // 로봇 팔
-        rootManager.rootObject.children["robotArm"] = new RobotArm(
-          new Transform({
-            position: vec3(0, -0.8, 0),
-            rotation: vec3(0, 0, 0),
-          })
-        );
+        const robotArm = new RobotArm();
+        rootManager.rootObject.children["robotArm"] = robotArm;
+
+        // 구름
+        for (i = 0; i < 10; i++) {
+          for (j = 0; j < 5; j++) {
+            rootManager.rootObject.children[`cloud${i}_${j}`] =
+              createFigure8FlyCloud(
+                vec3(
+                  -37 + i * 3,
+                  10 + Math.random() * 5,
+                  -40 + Math.random() * 5 + j * 10
+                ),
+                vec3(
+                  -45 + i * 3,
+                  10 + Math.random() * 5,
+                  0 + Math.random() * 5 + j * 10
+                )
+              );
+          }
+        }
+
+        // 아파트
+        for (i = 0; i < 3; i++) {
+          for (j = 0; j < 9; j++) {
+            rootManager.rootObject.children[`apartment_${i}_${j}`] =
+              new Apartment(
+                new Transform({
+                  position: vec3(25 + 10 * i, 5.55, -40 + j * 10),
+                  rotation: vec3(0, -90, 0),
+                  scale: vec3(5, 5, 5),
+                })
+              );
+          }
+        }
 
         // // Primitive 테스트
         // rootManager.rootObject.children["primitiveTestScene"] =

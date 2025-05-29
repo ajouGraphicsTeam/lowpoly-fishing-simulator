@@ -1,6 +1,7 @@
 class Seagull extends PrefabObject {
   init() {
     this.animator = new SeagullAnimator(this);
+    this.animator.loop = true;
 
     const torso = new HierarchyObject(
       [BoxPrimitive.fromWHDC(0.3, 0.25, 0.7)],
@@ -60,4 +61,82 @@ class Wing extends PrefabObject {
       position = vec3(l, 0, 0);
     });
   }
+}
+
+/**
+ * a ~ b 범위를 원형으로 돌아다니는 갈매기
+ * @param {vec3} a range start
+ * @param {vec3} b range end
+ * @param {number} frame  60 * sec를 추천
+ * @param {'XZ'|'XY'|'YZ'} plane - 원형 운동을 할 평면 (기본값 'XZ')
+ *
+ * @returns {Seagull}
+ */
+function createCircularFlySeagull(
+  a = vec3(-40, 10, -20),
+  b = vec3(0, 10, 20),
+  frame = 60 * 10,
+  plane = "XZ"
+) {
+  const seagull = new Seagull();
+  seagull.flyAnimator = new CircularFlyAnimator(seagull, a, b, frame, plane);
+  seagull.flyAnimator.loop = true;
+  seagull.animator.start();
+  seagull.flyAnimator.start(); // 나중에 시작된게(현재 Animator) 앞에거(SeagullAnimator)를 덮어쓴다
+
+  return seagull;
+}
+
+/**
+ * a ~ b 범위를 8자 모양으로 돌아다니는 갈매기
+ * @param {vec3} a range start
+ * @param {vec3} b range end
+ * @param {number} frame  60 * sec를 추천
+ * @param {'XZ'|'XY'|'YZ'} plane - 8자 운동을 할 평면 (기본값 'XZ')
+ *
+ * @returns {Seagull}
+ */
+function createFigure8FlySeagull(
+  a = vec3(-40, 10, -20),
+  b = vec3(0, 10, 20),
+  frame = 60 * 10,
+  plane = "XZ"
+) {
+  const seagull = new Seagull();
+  seagull.flyAnimator = new Figure8FlyAnimator(seagull, a, b, frame, plane);
+  seagull.flyAnimator.loop = true;
+  seagull.animator.start();
+  seagull.flyAnimator.start(); // 나중에 시작된게(현재 Animator) 앞에거(SeagullAnimator)를 덮어쓴다
+
+  return seagull;
+}
+
+/**
+ * a ~ b 범위를 무작위로 돌아다니는 갈매기
+ * @param {vec3} a range start
+ * @param {vec3} b range end
+ * @param {number} frame  60 * sec를 추천
+ * @param {number} numWaypoints - 생성할 경유지점 수 (0이면 자동 계산)
+ *
+ * @returns {Seagull}
+ */
+function createRandomFlySeagull(
+  a = vec3(-40, 10, -20),
+  b = vec3(0, 10, 20),
+  frame = 60 * 10,
+  numWaypoints = 0
+) {
+  const seagull = new Seagull();
+  seagull.flyAnimator = new RandomFlyAnimator(
+    seagull,
+    a,
+    b,
+    frame,
+    numWaypoints
+  );
+  seagull.flyAnimator.loop = true;
+  seagull.animator.start();
+  seagull.flyAnimator.start(); // 나중에 시작된게(현재 Animator) 앞에거(SeagullAnimator)를 덮어쓴다
+
+  return seagull;
 }
