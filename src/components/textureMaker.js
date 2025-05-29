@@ -3,68 +3,6 @@
  */
 
 /**
- * Creates a checkerboard pattern texture
- * @param {number} texSize - Size of the texture (texSize x texSize)
- * @param {number} checkSize - Size of each checker square (default: 8)
- * @returns {Uint8Array} - Texture data as Uint8Array for WebGL
- */
-function createCheckerboardTexture(texSize = 64, checkSize = 8) {
-    // Create a checkerboard pattern using floats
-    var image1 = new Array();
-    for (var i = 0; i < texSize; i++) image1[i] = new Array();
-    for (var i = 0; i < texSize; i++)
-        for (var j = 0; j < texSize; j++)
-            image1[i][j] = new Float32Array(4);
-
-    // Generate checkerboard pattern
-    for (var i = 0; i < texSize; i++) {
-        for (var j = 0; j < texSize; j++) {
-            var c = (((i & checkSize) == 0) ^ ((j & checkSize) == 0));
-            image1[i][j] = [c, c, c, 1];
-        }
-    }
-
-    // Convert floats to ubytes for texture
-    var image2 = new Uint8Array(4 * texSize * texSize);
-    for (var i = 0; i < texSize; i++) {
-        for (var j = 0; j < texSize; j++) {
-            for (var k = 0; k < 4; k++) {
-                image2[4 * texSize * i + 4 * j + k] = 255 * image1[i][j][k];
-            }
-        }
-    }
-
-    return image2;
-}
-
-/**
- * Creates a colored checkerboard pattern texture
- * @param {number} texSize - Size of the texture (texSize x texSize)
- * @param {Array} color1 - First color [r, g, b] (0~1 range)
- * @param {Array} color2 - Second color [r, g, b] (0~1 range)
- * @param {number} checkSize - Size of each checker square (default: 8)
- * @returns {Uint8Array} - Texture data as Uint8Array for WebGL
- */
-function createColoredCheckerboardTexture(texSize = 64, color1 = [1, 1, 1], color2 = [0, 0, 0], checkSize = 8) {
-    var image2 = new Uint8Array(4 * texSize * texSize);
-    
-    for (var i = 0; i < texSize; i++) {
-        for (var j = 0; j < texSize; j++) {
-            var isFirstColor = (((i & checkSize) == 0) ^ ((j & checkSize) == 0));
-            var color = isFirstColor ? color1 : color2;
-            
-            var index = 4 * (texSize * i + j);
-            image2[index] = 255 * color[0];     // R
-            image2[index + 1] = 255 * color[1]; // G
-            image2[index + 2] = 255 * color[2]; // B
-            image2[index + 3] = 255;            // A
-        }
-    }
-
-    return image2;
-}
-
-/**
  * Creates a WebGL texture from texture data
  * @param {WebGLRenderingContext} gl - WebGL context
  * @param {Uint8Array} textureData - Texture data
@@ -88,65 +26,6 @@ function createWebGLTexture(gl, textureData, width, height) {
 }
 
 /**
- * Creates a gradient texture
- * @param {number} texSize - Size of the texture
- * @param {Array} color1 - Start color [r, g, b] (0-1 range)
- * @param {Array} color2 - End color [r, g, b] (0-1 range)
- * @param {string} direction - 'horizontal' or 'vertical'
- * @returns {Uint8Array} - Gradient texture data
- */
-function createGradientTexture(texSize = 64, color1 = [1, 0, 0], color2 = [0, 0, 1], direction = 'horizontal') {
-    var image = new Uint8Array(4 * texSize * texSize);
-    
-    for (var i = 0; i < texSize; i++) {
-        for (var j = 0; j < texSize; j++) {
-            var t = direction === 'horizontal' ? j / (texSize - 1) : i / (texSize - 1);
-            
-            var r = color1[0] * (1 - t) + color2[0] * t;
-            var g = color1[1] * (1 - t) + color2[1] * t;
-            var b = color1[2] * (1 - t) + color2[2] * t;
-            
-            var index = 4 * (texSize * i + j);
-            image[index] = 255 * r;     // R
-            image[index + 1] = 255 * g; // G
-            image[index + 2] = 255 * b; // B
-            image[index + 3] = 255;     // A
-        }
-    }
-    
-    return image;
-}
-
-/**
- * Creates a striped texture
- * @param {number} texSize - Size of the texture
- * @param {Array} color1 - First color [r, g, b] (0-1 range)
- * @param {Array} color2 - Second color [r, g, b] (0-1 range)
- * @param {number} stripeWidth - Width of each stripe
- * @param {string} direction - 'horizontal' or 'vertical'
- * @returns {Uint8Array} - Striped texture data
- */
-function createStripedTexture(texSize = 64, color1 = [1, 1, 1], color2 = [0, 0, 0], stripeWidth = 8, direction = 'horizontal') {
-    var image = new Uint8Array(4 * texSize * texSize);
-    
-    for (var i = 0; i < texSize; i++) {
-        for (var j = 0; j < texSize; j++) {
-            var coord = direction === 'horizontal' ? j : i;
-            var isFirstColor = Math.floor(coord / stripeWidth) % 2 === 0;
-            var color = isFirstColor ? color1 : color2;
-            
-            var index = 4 * (texSize * i + j);
-            image[index] = 255 * color[0];     // R
-            image[index + 1] = 255 * color[1]; // G
-            image[index + 2] = 255 * color[2]; // B
-            image[index + 3] = 255;            // A
-        }
-    }
-    
-    return image;
-}
-
-/**
  * Creates a WebGL texture from an image file
  * @param {WebGLRenderingContext} gl - WebGL context
  * @param {string} imagePath - Path to the image file
@@ -163,7 +42,7 @@ function createTextureFromImage(gl, imagePath, callback = null) {
     
     // 이미지 로드
     const image = new Image();
-    image.crossOrigin = "anonymous"; // CORS 문제 방지
+    image.crossOrigin = "anonymous"; // CORS 문제 방지, 우리 프로젝트에선 딱히 필요x(local 파일들만 사용하니까)
     
     image.onload = function() {
         gl.bindTexture(gl.TEXTURE_2D, texture);
