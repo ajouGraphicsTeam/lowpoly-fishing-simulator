@@ -4,6 +4,11 @@ class RobotArmAnimator extends Animator {
 
 class RobotArmCastingAnimator extends Animator {
   animationData = createCastingAnimationFrames(240);
+
+  stop() {
+    this.object.idleAnimator.start();
+    super.stop();
+  }
 }
 
 class RobotArmIdleFishingAnimator extends Animator {
