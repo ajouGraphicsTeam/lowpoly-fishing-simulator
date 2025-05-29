@@ -1,5 +1,15 @@
 class RobotArmAnimator extends Animator {
+  // animationData = generateRobotArmAnimationData();
+  animationData = createIdleFishingAnimationFrames(240);
+}
+
+class RobotArmCastingAnimator extends Animator {
   animationData = createCastingAnimationFrames(240);
+}
+
+class RobotArmIdleFishingAnimator extends Animator {
+  loop = true;
+  animationData = createIdleFishingAnimationFrames(240);
 }
 
 /**
@@ -476,7 +486,7 @@ function createCastingAnimationFrames() {
       line0RotZ = lerp(20, 35, phaseT); // Line_0 angle settles, still projecting
       for (let k = 0; k < 9; k++) lineXRotZ[k] = lerp(2, 1, phaseT); // Lines become very straight
       for (let k = 0; k < 10; k++) lineXScaleY[k] = lerp(1.0, 1.5, phaseT); // Lines extend to 1.5x length
-      baitTransform.scale = vec3(1, 1 / lerp(1.0, 1.5, phaseT) ** 10, 1); // scale을 적용시켰더니 하위에도 적요이 되어서 상쇄 시키기
+      baitTransform.scale = vec3(1, 1 / lerp(1.0, 1.5, phaseT) ** 10, 1); // scale을 적용시켰더니 하위에도 적용 되어서 상쇄 시키기
     } else {
       // Phase 3b: Line Settles with Gravity
       const phaseT =
@@ -492,6 +502,7 @@ function createCastingAnimationFrames() {
         lineXRotZ[k] = lerp(1, initialLineXRotZ + k * 1.8, phaseT);
       }
       for (let k = 0; k < 10; k++) lineXScaleY[k] = 2.5; // Lines remain extended
+      baitTransform.scale = vec3(1, 1 / 1.5 ** 10, 1); // scale을 적용시켰더니 하위에도 적용 되어서 상쇄 시키기
     }
 
     armTransform.rotation = vec3(
@@ -538,6 +549,161 @@ function createCastingAnimationFrames() {
         lineTransforms[j].scale.Z
       );
     }
+    frames.push(currentFramePose);
+  }
+  return frames;
+}
+
+/**
+ * Generates frames for the "idle fishing" animation (subtle sway).
+ * Total duration: 4 seconds (240 frames at 60 FPS) for seamless looping.
+ * @returns {Array<Object>} An array of frame pose objects.
+ */
+function createIdleFishingAnimationFrames() {
+  const frames = [];
+  const totalDurationSeconds = 4.0;
+  const fps = 60;
+  const numFrames = totalDurationSeconds * fps; // 240 frames
+
+  // Starting state for idle fishing (from your casted state)
+  const idleStartArmRotZ = 10;
+  const idleStartInnerArm1RotZ = 20;
+  const idleStartInnerArm2RotZ = 20;
+  const idleStartRodRotZ = 30;
+  const idleStartLine0RotZ = 45;
+  const idleStartLineXRotZBase = 5; // InitialLineXRotZ for Line_1 to Line_9
+  const idleStartLineScaleY = 2.5; // From casted state
+
+  // Sway parameters
+  const armSwayAmplitudeZ = 2; // Subtle sway for the base arm
+  const innerArm1SwayAmplitudeZ = 3;
+  const innerArm2SwayAmplitudeZ = 2;
+  const rodSwayAmplitudeZ = 5; // Rod tip moves more
+  const lineSwayAmplitudeZ = 8; // Line moves most significantly
+  const baitSwayAmplitudeX = 0.05; // Bait moves left/right slightly
+  const baitSwayAmplitudeY = 0.05; // Bait moves up/down slightly
+
+  for (let i = 0; i < numFrames; i++) {
+    let currentFramePose = createFreshPose();
+
+    let armTransform = currentFramePose.children.arm.transform;
+    let innerArm1Transform =
+      currentFramePose.children.arm.children.innerArm.transform;
+    let innerArm2Transform =
+      currentFramePose.children.arm.children.innerArm.children.innerArm
+        .transform;
+    let rodTransform =
+      currentFramePose.children.arm.children.innerArm.children.innerArm.children
+        .fishingRod.children.rod.transform;
+
+    let lineTransforms = [];
+    let currentLineParent =
+      currentFramePose.children.arm.children.innerArm.children.innerArm.children
+        .fishingRod.children.rod;
+    for (let j = 0; j < 10; j++) {
+      const lineSegment = currentLineParent.children[`line_${j}`];
+      lineTransforms.push(lineSegment.transform);
+      currentLineParent = lineSegment; // Update currentLineParent for next iteration
+    }
+    let baitTransform = currentLineParent.children["bait"].transform;
+
+    const timeFactor = (2 * Math.PI * i) / numFrames; // Ensures seamless loop (0 to 2PI)
+
+    // Apply initial state values
+    armTransform.rotation = vec3(
+      armTransform.rotation.X,
+      armTransform.rotation.Y,
+      idleStartArmRotZ
+    );
+    innerArm1Transform.rotation = vec3(
+      innerArm1Transform.rotation.X,
+      innerArm1Transform.rotation.Y,
+      idleStartInnerArm1RotZ
+    );
+    innerArm2Transform.rotation = vec3(
+      innerArm2Transform.rotation.X,
+      innerArm2Transform.rotation.Y,
+      idleStartInnerArm2RotZ
+    );
+    rodTransform.rotation = vec3(
+      rodTransform.rotation.X,
+      rodTransform.rotation.Y,
+      idleStartRodRotZ
+    );
+
+    lineTransforms[0].rotation = vec3(
+      lineTransforms[0].rotation.X,
+      lineTransforms[0].rotation.Y,
+      idleStartLine0RotZ
+    );
+    lineTransforms[0].scale = vec3(
+      lineTransforms[0].scale.X,
+      idleStartLineScaleY,
+      lineTransforms[0].scale.Z
+    );
+
+    for (let j = 1; j < 10; j++) {
+      // Use the initial droop for starting, then add sway
+      const initialDroop = idleStartLineXRotZBase + (j - 1) * 1.8; // k*1.8 from your casted state for line_XRotZ
+      lineTransforms[j].rotation = vec3(
+        lineTransforms[j].rotation.X,
+        lineTransforms[j].rotation.Y,
+        initialDroop
+      );
+      lineTransforms[j].scale = vec3(
+        lineTransforms[j].scale.X,
+        idleStartLineScaleY,
+        lineTransforms[j].scale.Z
+      );
+    }
+    baitTransform.scale = vec3(1, 1 / idleStartLineScaleY ** 10, 1); // Compensate scale
+
+    // Add subtle swaying motion using sine waves
+    armTransform.rotation = vec3(
+      armTransform.rotation.X,
+      armTransform.rotation.Y,
+      idleStartArmRotZ + armSwayAmplitudeZ * Math.sin(timeFactor * 0.5)
+    ); // Slower sway
+    innerArm1Transform.rotation = vec3(
+      innerArm1Transform.rotation.X,
+      innerArm1Transform.rotation.Y,
+      idleStartInnerArm1RotZ +
+        innerArm1SwayAmplitudeZ * Math.sin(timeFactor * 0.7)
+    );
+    innerArm2Transform.rotation = vec3(
+      innerArm2Transform.rotation.X,
+      innerArm2Transform.rotation.Y,
+      idleStartInnerArm2RotZ +
+        innerArm2SwayAmplitudeZ * Math.sin(timeFactor * 0.9)
+    );
+    rodTransform.rotation = vec3(
+      rodTransform.rotation.X,
+      rodTransform.rotation.Y,
+      idleStartRodRotZ + rodSwayAmplitudeZ * Math.sin(timeFactor * 1.0)
+    ); // Main rod sway
+
+    // Line and bait sway
+    for (let j = 0; j < 10; j++) {
+      // Line sway gets more pronounced further down
+      const currentLineRotZ =
+        lineTransforms[j].rotation.Z +
+        lineSwayAmplitudeZ * (j / 9) * Math.sin(timeFactor * 1.2 + j * 0.1);
+      lineTransforms[j].rotation = vec3(
+        lineTransforms[j].rotation.X,
+        lineTransforms[j].rotation.Y,
+        currentLineRotZ
+      );
+    }
+
+    // Bait specific motion
+    const currentBaitPosX = baitSwayAmplitudeX * Math.sin(timeFactor * 1.5); // Left/right motion
+    const currentBaitPosY = baitSwayAmplitudeY * Math.cos(timeFactor * 1.8); // Up/down motion (slight bobbing)
+    baitTransform.position = vec3(
+      baitTransform.position.X + currentBaitPosX,
+      baitTransform.position.Y + currentBaitPosY,
+      baitTransform.position.Z
+    );
+
     frames.push(currentFramePose);
   }
   return frames;
