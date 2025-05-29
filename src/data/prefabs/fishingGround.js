@@ -1,7 +1,7 @@
 class FishingGround extends PrefabObject {
     init() {
-        // TODO:
         // 이거 무한정으로 반복해서 생성할 수 있나?? 메모리랑 GPU CPU 괜찮나? 확인
+        // -> 가능은 함. 그러나 굳이 그럴 필요가 없다고 느낌.
 
         // 낚시터 바닥
         const groundSize = 50; // 바닥 크기

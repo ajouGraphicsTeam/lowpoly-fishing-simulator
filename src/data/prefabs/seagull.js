@@ -5,14 +5,16 @@ class Seagull extends PrefabObject {
 
     const torso = new HierarchyObject(
       [BoxPrimitive.fromWHDC(0.3, 0.25, 0.7)],
-      new Transform({ position: vec3(0, 0, 0) })
+      new Transform({ position: vec3(0, 0, 0) }),
+      COLORS.WHITE
     );
 
     const head = new HierarchyObject(
       [BoxPrimitive.fromWHDC(0.18, 0.18, 0.22)],
       new Transform({
         position: vec3(0, 0.15, 0.35), // Forward, slightly up from torso center
-      })
+      }),
+      COLORS.WHITE
     );
 
     this.children["torso"] = torso;
@@ -52,7 +54,8 @@ class Wing extends PrefabObject {
     wingSegDims.forEach(({ l, t, c }, idx) => {
       const _wing = new HierarchyObject(
         [BoxPrimitive.fromWHDC(l, t, c, vec3(l / 2, 0, 0))],
-        new Transform({ position })
+        new Transform({ position }),
+        COLORS.WHITE
       );
 
       parent.children[`wing_${idx}`] = _wing;

@@ -3,7 +3,7 @@ class RobotArmAnimator extends Animator {
 }
 
 class RobotArmCastingAnimator extends Animator {
-  animationData = createCastingAnimationFrames(240);
+  animationData = createCastingAnimationFrames(80);
 
   stop() {
     this.object.idleAnimator.start();
@@ -13,11 +13,11 @@ class RobotArmCastingAnimator extends Animator {
 
 class RobotArmIdleFishingAnimator extends Animator {
   loop = true;
-  animationData = createIdleFishingAnimationFrames(240);
+  animationData = createIdleFishingAnimationFrames(80);
 }
 
 class RobotArmReelingAnimator extends Animator {
-  animationData = createReelingAnimationFrames(240);
+  animationData = createReelingAnimationFrames(40);
 
   start() {
     this.object.idleAnimator.stop();
@@ -418,9 +418,9 @@ function createFreshPose() {
  */
 function createCastingAnimationFrames() {
   const frames = [];
-  const totalDurationSeconds = 4.0; // 8초로 변경
+  const totalDurationSeconds = 1.0; // 4.0에서 1.0으로 변경하여 4배 빨라짐
   const fps = 60;
-  const numFrames = totalDurationSeconds * fps; // 240 프레임
+  const numFrames = totalDurationSeconds * fps; // 120 프레임
 
   // Initial Z rotations from the default pose for reference
   const initialArm1RotZ = 30;
@@ -574,9 +574,9 @@ function createCastingAnimationFrames() {
  */
 function createIdleFishingAnimationFrames() {
   const frames = [];
-  const totalDurationSeconds = 4.0;
+  const totalDurationSeconds = 2.0; // 4.0에서 2.0으로 변경하여 2배 빨라짐
   const fps = 60;
-  const numFrames = totalDurationSeconds * fps; // 240 frames
+  const numFrames = totalDurationSeconds * fps; // 120 frames
 
   // Starting state for idle fishing (from your casted state)
   const idleStartArmRotZ = 10;
@@ -724,14 +724,14 @@ function createIdleFishingAnimationFrames() {
 
 /**
  * Generates frames for the "reeling in" animation.
- * Total duration: 4 seconds (240 frames at 60 FPS).
+ * Total duration: 1.5 seconds (90 frames at 60 FPS).
  * @returns {Array<Object>} An array of frame pose objects.
  */
 function createReelingAnimationFrames() {
   const frames = [];
-  const totalDurationSeconds = 4.0;
+  const totalDurationSeconds = 1.0; // 1.5에서 1.0으로 변경하여 1.5배 빨라짐
   const fps = 60;
-  const numFrames = totalDurationSeconds * fps;
+  const numFrames = totalDurationSeconds * fps; // 60 frames
 
   // Start state for reeling (should match the end state of idle fishing or casting)
   const reelStartArmRotZ = 10;

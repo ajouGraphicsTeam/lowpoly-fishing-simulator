@@ -1,8 +1,5 @@
 class Ocean extends PrefabObject {
     init() {
-        // TODO:
-        // 시간이 된다면, 바다에 파도 어떻게 넣을 수 없을까 고민해보기.
-        // 아마 한다면 삼각기둥을 옆으로 눕힌 형태??
 
         // 바다 바닥
         const oceanSize = 50; // 바닥 크기

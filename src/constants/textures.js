@@ -10,8 +10,8 @@ const TEXTURES = {
     CHECKERBOARD_BLUE_WHITE: null, // 파랑-흰색 체커보드
     
     // 그라데이션 텍스처들
-    GRADIENT_RED_BLUE_H: null, // 빨강에서 파랑으로 수평 그라데이션
-    GRADIENT_GREEN_YELLOW_V: null, // 초록에서 노랑으로 수직 그라데이션
+    GRADIENT_RED_BLUE_H: null,
+    GRADIENT_GREEN_YELLOW_V: null, 
 
     // 줄무늬 텍스처들
     STRIPES_BLACK_WHITE_H: null, // 흑백 수평 줄무늬
@@ -26,6 +26,8 @@ const TEXTURES = {
     OCEAN_TEXTURE: null, // water.jpg
     ROBOT_TEXTURE: null, // robot.jpg
     SKY_TEXTURE: null, // sky.jpg
+    CLOUD_TEXTURE: null, // cloud.jpg
+    BUILDING_SIDE_TEXTURE: null, // building_side.jpg
 };
 
 /**
@@ -101,6 +103,16 @@ function initTextures() {
         }
     }); 
     TEXTURES.SKY_TEXTURE = createTextureFromImage(gl, 'src/data/textures/sky.jpg', () => {
+        if (typeof rootManager !== 'undefined' && rootManager.canvasManager) {
+            rootManager.canvasManager.render(); 
+        }
+    }); 
+    TEXTURES.CLOUD_TEXTURE = createTextureFromImage(gl, 'src/data/textures/cloud.jpg', () => {
+        if (typeof rootManager !== 'undefined' && rootManager.canvasManager) {
+            rootManager.canvasManager.render(); 
+        }
+    }); 
+    TEXTURES.BUILDING_SIDE_TEXTURE = createTextureFromImage(gl, 'src/data/textures/building_side.jpg', () => {
         if (typeof rootManager !== 'undefined' && rootManager.canvasManager) {
             rootManager.canvasManager.render(); 
         }

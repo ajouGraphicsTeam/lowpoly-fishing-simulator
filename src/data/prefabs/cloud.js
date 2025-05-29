@@ -20,7 +20,9 @@ class Cloud extends PrefabObject {
       CloudPrimitives[type],
       new Transform({
         scale: vec3(4, 1, 3),
-      })
+      }),
+      COLORS.WHITE,
+      TEXTURES.CLOUD_TEXTURE
     );
   }
 }
