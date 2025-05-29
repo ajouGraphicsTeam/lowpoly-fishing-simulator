@@ -1,6 +1,5 @@
 class RobotArmAnimator extends Animator {
-  // animationData = generateRobotArmAnimationData();
-  animationData = createIdleFishingAnimationFrames(240);
+  animationData = generateRobotArmAnimationData();
 }
 
 class RobotArmCastingAnimator extends Animator {
@@ -10,6 +9,10 @@ class RobotArmCastingAnimator extends Animator {
 class RobotArmIdleFishingAnimator extends Animator {
   loop = true;
   animationData = createIdleFishingAnimationFrames(240);
+}
+
+class RobotArmReelingAnimator extends Animator {
+  animationData = createReelingAnimationFrames(240);
 }
 
 /**
@@ -704,6 +707,160 @@ function createIdleFishingAnimationFrames() {
       baitTransform.position.Z
     );
 
+    frames.push(currentFramePose);
+  }
+  return frames;
+}
+
+/**
+ * Generates frames for the "reeling in" animation.
+ * Total duration: 4 seconds (240 frames at 60 FPS).
+ * @returns {Array<Object>} An array of frame pose objects.
+ */
+function createReelingAnimationFrames() {
+  const frames = [];
+  const totalDurationSeconds = 4.0;
+  const fps = 60;
+  const numFrames = totalDurationSeconds * fps;
+
+  // Start state for reeling (should match the end state of idle fishing or casting)
+  const reelStartArmRotZ = 10;
+  const reelStartInnerArm1RotZ = 20;
+  const reelStartInnerArm2RotZ = 20;
+  const reelStartRodRotZ = 30;
+  const reelStartLine0RotZ = 45;
+  const reelStartLineXRotZBase = 5; // For line_1 through line_9 (base droop)
+  const reelStartLineScaleY = 2.5; // Extended line length
+
+  // End state for reeling (closer to the initial 'ready' pose)
+  const reelEndArmRotZ = 0;
+  const reelEndInnerArm1RotZ = 30;
+  const reelEndInnerArm2RotZ = 30;
+  const reelEndRodRotZ = 20;
+  const reelEndLine0RotZ = 45;
+  const reelEndLineXRotZ = 5;
+  const reelEndLineScaleY = 1.0; // Original line length
+
+  // Animation phases
+  const pullUpPhaseDuration = 0.7 * numFrames; // 낚시대를 들어 올리는 주 동작 (2.8초)
+  const settlePhaseDuration = numFrames - pullUpPhaseDuration; // 자세 안정화 (1.2초)
+
+  for (let i = 0; i < numFrames; i++) {
+    let currentFramePose = createFreshPose();
+
+    let armTransform = currentFramePose.children.arm.transform;
+    let innerArm1Transform =
+      currentFramePose.children.arm.children.innerArm.transform;
+    let innerArm2Transform =
+      currentFramePose.children.arm.children.innerArm.children.innerArm
+        .transform;
+    let rodTransform =
+      currentFramePose.children.arm.children.innerArm.children.innerArm.children
+        .fishingRod.children.rod.transform;
+
+    let lineTransforms = [];
+    let currentLineParent =
+      currentFramePose.children.arm.children.innerArm.children.innerArm.children
+        .fishingRod.children.rod;
+    for (let j = 0; j < 10; j++) {
+      const lineSegment = currentLineParent.children[`line_${j}`];
+      lineTransforms.push(lineSegment.transform);
+      currentLineParent = lineSegment;
+    }
+    let baitTransform = currentLineParent.children["bait"].transform;
+
+    let armRotZ, innerArm1RotZ, innerArm2RotZ, rodRotZ, line0RotZ;
+    let lineXRotZ = new Array(9).fill(0);
+    let lineXScaleY = new Array(10).fill(0);
+
+    if (i < pullUpPhaseDuration) {
+      // Phase 1: Pulling up the rod and shortening the line
+      const phaseT = i / (pullUpPhaseDuration - 1); // 0 to 1
+      armRotZ = lerp(reelStartArmRotZ, reelEndArmRotZ, phaseT);
+      innerArm1RotZ = lerp(
+        reelStartInnerArm1RotZ,
+        reelEndInnerArm1RotZ,
+        phaseT
+      );
+      innerArm2RotZ = lerp(
+        reelStartInnerArm2RotZ,
+        reelEndInnerArm2RotZ,
+        phaseT
+      );
+      rodRotZ = lerp(reelStartRodRotZ, reelEndRodRotZ, phaseT);
+
+      // Line angles and scales change gradually
+      line0RotZ = lerp(reelStartLine0RotZ, reelEndLine0RotZ, phaseT);
+      for (let k = 0; k < 9; k++) {
+        const initialDroop = reelStartLineXRotZBase + k * 1.8;
+        lineXRotZ[k] = lerp(initialDroop, reelEndLineXRotZ, phaseT);
+      }
+      for (let k = 0; k < 10; k++) {
+        lineXScaleY[k] = lerp(reelStartLineScaleY, reelEndLineScaleY, phaseT);
+      }
+      baitTransform.scale = vec3(1, 1 / lineXScaleY[9] ** 10, 1); // Compensate bait scale
+    } else {
+      // Phase 2: Settling into the final 'ready' pose
+      const phaseT = (i - pullUpPhaseDuration) / (settlePhaseDuration - 1);
+      armRotZ = lerp(reelEndArmRotZ, reelEndArmRotZ, phaseT); // Maintain final position
+      innerArm1RotZ = lerp(reelEndInnerArm1RotZ, reelEndInnerArm1RotZ, phaseT);
+      innerArm2RotZ = lerp(reelEndInnerArm2RotZ, reelEndInnerArm2RotZ, phaseT);
+      rodRotZ = lerp(reelEndRodRotZ, reelEndRodRotZ, phaseT);
+
+      line0RotZ = lerp(reelEndLine0RotZ, reelEndLine0RotZ, phaseT);
+      for (let k = 0; k < 9; k++) {
+        lineXRotZ[k] = lerp(reelEndLineXRotZ, reelEndLineXRotZ, phaseT);
+      }
+      for (let k = 0; k < 10; k++) {
+        lineXScaleY[k] = lerp(reelEndLineScaleY, reelEndLineScaleY, phaseT);
+      }
+      baitTransform.scale = vec3(1, 1 / reelEndLineScaleY ** 10, 1); // Compensate bait scale
+    }
+
+    armTransform.rotation = vec3(
+      armTransform.rotation.X,
+      armTransform.rotation.Y,
+      armRotZ
+    );
+    innerArm1Transform.rotation = vec3(
+      innerArm1Transform.rotation.X,
+      innerArm1Transform.rotation.Y,
+      innerArm1RotZ
+    );
+    innerArm2Transform.rotation = vec3(
+      innerArm2Transform.rotation.X,
+      innerArm2Transform.rotation.Y,
+      innerArm2RotZ
+    );
+    rodTransform.rotation = vec3(
+      rodTransform.rotation.X,
+      rodTransform.rotation.Y,
+      rodRotZ
+    );
+
+    lineTransforms[0].rotation = vec3(
+      lineTransforms[0].rotation.X,
+      lineTransforms[0].rotation.Y,
+      line0RotZ
+    );
+    lineTransforms[0].scale = vec3(
+      lineTransforms[0].scale.X,
+      lineXScaleY[0],
+      lineTransforms[0].scale.Z
+    );
+
+    for (let j = 1; j < 10; j++) {
+      lineTransforms[j].rotation = vec3(
+        lineTransforms[j].rotation.X,
+        lineTransforms[j].rotation.Y,
+        lineXRotZ[j - 1]
+      );
+      lineTransforms[j].scale = vec3(
+        lineTransforms[j].scale.X,
+        lineXScaleY[j],
+        lineTransforms[j].scale.Z
+      );
+    }
     frames.push(currentFramePose);
   }
   return frames;

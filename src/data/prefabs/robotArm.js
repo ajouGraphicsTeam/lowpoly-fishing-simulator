@@ -1,6 +1,9 @@
 class RobotArm extends PrefabObject {
   init() {
     this.animator = new RobotArmAnimator(this);
+    this.castingAnimator = new RobotArmCastingAnimator(this);
+    this.idleAnimator = new RobotArmIdleFishingAnimator(this);
+    this.reelingAnimator = new RobotArmReelingAnimator(this);
 
     const _box = new BoxPrimitive([
       [-0.1, 0.5, 0.025],
