@@ -34,12 +34,19 @@ class FishHead extends PrefabObject {
 
     // 이 머리 디자인은 X축으로 대략 -0.125 (뒤) ~ +0.125 (앞) 범위입니다.
     // 몸통(FishBody)은 head의 x = -0.125 지점에서 시작하도록 Fish.init()에서 조정해야 합니다.
+    
+    // 랜덤 색상 선택
+    const headColor = this.getRandomColor();
+    
     this.primitives = [
       // 길이(X), 두께(Y), 높이(Z)
       BoxPrimitive.fromWHDC(0.1, 0.14, 0.18, vec3(0, 0, 0)),
 
       BoxPrimitive.fromWHDC(0.05, 0.08, 0.12, vec3(-0.075, 0, 0)),
     ];
+    
+    // 모든 primitive에 같은 랜덤 색상 적용
+    this.color = headColor;
   }
 }
 
@@ -57,6 +64,11 @@ class FishBody extends PrefabObject {
       { l: 0.08, t: 0.08, c: 0.1 }, // s4 (꼬리 시작 전 가장 가는 부분)
     ];
 
+    // 몸통용 랜덤 색상 선택
+    const bodyColor = this.getRandomColor();
+    // 지느러미용 랜덤 색상 선택 (몸통과 다른 색상)
+    const finColor = this.getRandomColor();
+
     var parent = this; // this는 FishBody 인스턴스
     var position = vec3(0, 0, 0); // 첫 번째 마디는 FishBody의 원점에서 시작
     let lastBodySegmentLength = 0;
@@ -67,7 +79,8 @@ class FishBody extends PrefabObject {
       // 중심오프셋 vec3(l/2,0,0) 은 마디의 앞쪽 끝이 로컬 (0,0,0)에 오도록 함
       const _bodySegment = new HierarchyObject(
         [BoxPrimitive.fromWHDC(l, t, c, vec3(l / 2, 0, 0))],
-        new Transform({ position: vec3(position) }) // position은 이전 마디 끝을 기준으로 계산됨
+        new Transform({ position: vec3(position) }), // position은 이전 마디 끝을 기준으로 계산됨
+        bodyColor // 랜덤 색상 적용
       );
 
       parent.children[`body_${idx}`] = _bodySegment;
@@ -88,7 +101,8 @@ class FishBody extends PrefabObject {
             // 몸통 마디의 등 중앙에 위치
             position: vec3(l / 2, 0, c / 2 - 0.01), // 마디의 중심선에서 Z+ 방향으로 살짝
             rotation: vec3(10, 0, 90), // 약간 뒤로 눕도록 X축 회전
-          })
+          }),
+          finColor // 지느러미 색상 적용
         );
         _bodySegment.children["dorsalFin"] = dorsalFin;
       }
@@ -110,7 +124,8 @@ class FishBody extends PrefabObject {
             // 몸통 마디의 옆구리 중앙 (-Y 방향)
             position: vec3(l * 0.3, -t / 2, 0),
             rotation: vec3(0, -25, -30), // Y축: 뒤로 쓸리듯, Z축: 아래로 펼쳐지듯
-          })
+          }),
+          finColor // 지느러미 색상 적용
         );
         _bodySegment.children["leftPectoralFin"] = leftPectoralFin;
 
@@ -120,7 +135,8 @@ class FishBody extends PrefabObject {
             // 몸통 마디의 옆구리 중앙 (+Y 방향)
             position: vec3(l * 0.3, t / 2, 0),
             rotation: vec3(0, -25, 30), // 대칭적인 회전
-          })
+          }),
+          finColor // 지느러미 색상 적용
         );
         _bodySegment.children["rightPectoralFin"] = rightPectoralFin;
       }
@@ -148,6 +164,9 @@ class FishTail extends PrefabObject {
       { l: 0.05, t: 0.015, c: 0.28 }, // s2 (지느러미 끝, 더 넓게)
     ];
 
+    // 꼬리용 랜덤 색상 선택
+    const tailColor = this.getRandomColor();
+
     var parent = this; // this는 FishTail 인스턴스
     var position = vec3(0, 0, 0); // 첫 마디는 FishTail의 원점에서 시작
     let lastTailSegmentLength = 0;
@@ -155,7 +174,8 @@ class FishTail extends PrefabObject {
     tailSegDims.forEach(({ l, t, c }, idx) => {
       const _tailSegment = new HierarchyObject(
         [BoxPrimitive.fromWHDC(l, t, c, vec3(l / 2, 0, 0))],
-        new Transform({ position: vec3(position) })
+        new Transform({ position: vec3(position) }),
+        tailColor // 랜덤 색상 적용
       );
 
       parent.children[`tail_${idx}`] = _tailSegment;
@@ -167,7 +187,7 @@ class FishTail extends PrefabObject {
 }
 
 /**
- * a ~ b 범위를 원형으로 돌아다니는 갈매기
+ * a ~ b 범위를 원형으로 돌아다니는 물고기
  * @param {vec3} a range start
  * @param {vec3} b range end
  * @param {number} frame  60 * sec를 추천
@@ -191,7 +211,7 @@ function createCircularSwimFish(
 }
 
 /**
- * a ~ b 범위를 8자 모양으로 돌아다니는 갈매기
+ * a ~ b 범위를 8자 모양으로 돌아다니는 물고기
  * @param {vec3} a range start
  * @param {vec3} b range end
  * @param {number} frame  60 * sec를 추천
@@ -215,7 +235,7 @@ function createFigure8SwimFish(
 }
 
 /**
- * a ~ b 범위를 무작위로 돌아다니는 갈매기
+ * a ~ b 범위를 무작위로 돌아다니는 물고기
  * @param {vec3} a range start
  * @param {vec3} b range end
  * @param {number} frame  60 * sec를 추천

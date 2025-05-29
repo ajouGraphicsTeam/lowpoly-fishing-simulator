@@ -1,11 +1,9 @@
 class SkyBox extends PrefabObject {
     init() {
-        // TODO:
-        // 이거 빛에서 먼 벽이 더 밝게 나옴... 왜지...???
-        // 수정 필요함
-
-        // Skybox는 카메라를 중심으로 거대한 정육면체를 만들어서 하늘 효과를 냄
-        // 카메라가 움직여도 항상 따라다니도록 함
+        
+        // 이거 skyBox를 box로 생성하면, 법선 벡터가 바깥쪽이라 안됨.
+        // box primitive의 법선 벡터를 반대로 할 수 있게 parameter에 flag를 삽입할 수도 있겠으나,
+        // 굳이 원래 있는 class를 바꾸기보단, 그냥 이렇게 quad primitive 6개로 만들기로 결정함.
         
         const skyboxSize = 100; // 한 변의 길이
         const halfSize = skyboxSize / 2;

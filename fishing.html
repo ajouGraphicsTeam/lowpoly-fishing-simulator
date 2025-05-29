@@ -219,7 +219,7 @@
                   <input
                     id="eye_x"
                     type="number"
-                    value="-1.7"
+                    value="-5.15"
                     step="0.01"
                     class="border pl-1" />
                 </div>
@@ -228,7 +228,7 @@
                   <input
                     id="eye_y"
                     type="number"
-                    value="4.3"
+                    value="3.15"
                     step="0.01"
                     class="border pl-1" />
                 </div>
@@ -237,7 +237,7 @@
                   <input
                     id="eye_z"
                     type="number"
-                    value="2.9"
+                    value="4.40"
                     step="0.01"
                     class="border pl-1" />
                 </div>
@@ -250,7 +250,7 @@
                   <input
                     id="at_x"
                     type="number"
-                    value="-1"
+                    value="-6.5"
                     step="0.01"
                     class="border pl-1" />
                 </div>
@@ -259,7 +259,7 @@
                   <input
                     id="at_y"
                     type="number"
-                    value="0"
+                    value="-0.5"
                     step="0.01"
                     class="border pl-1" />
                 </div>
@@ -268,7 +268,7 @@
                   <input
                     id="at_z"
                     type="number"
-                    value="0"
+                    value="-0.5"
                     step="0.01"
                     class="border pl-1" />
                 </div>
@@ -316,9 +316,33 @@
                 robotArm wave
               </button>
               <button class="border px-1" onclick="fishingStart()">
-                낚시 시작
+                Cast fishing rod
               </button>
-              <button class="border px-1" onclick="reelingStart()">낚기</button>
+              <button class="border px-1" onclick="reelingStart()">
+                Try to catch fish
+              </button>
+              
+              <div class="mt-2">
+                <button 
+                  id="stopAllBtn" 
+                  class="border px-2 py-1 bg-red-100 hover:bg-red-200" 
+                  onclick="stopAllAnimations()">
+                  ⏹️ Stop Animations
+                </button>
+                <button 
+                  id="resumeAllBtn" 
+                  class="border px-2 py-1 bg-green-100 hover:bg-green-200 ml-1" 
+                  onclick="resumeAllAnimations()">
+                  ▶️ Resume Animations
+                </button>
+              </div>
+              
+              <div id="fishingResult" class="mt-3 p-2 rounded border hidden">
+                <p id="resultText" class="font-semibold text-center"></p>
+                <p id="resultDetails" class="text-sm text-center mt-1"></p>
+              </div>
+              
+              
             </div>
           </div>
         </div>
@@ -328,10 +352,16 @@
         const fishingStart = () => {
           robotArm.fishingRod.bait.children = {};
           robotArm.castingAnimator.start();
+          
+          // 이전 결과 숨기기
+          const resultDiv = document.getElementById('fishingResult');
+          resultDiv.classList.add('hidden');
         };
         const reelingStart = () => {
           // 성공확률 30퍼
-          if (Math.random() > 0.7) {
+          const isSuccess = Math.random() > 0.7;
+          
+          if (isSuccess) {
             const _fish = new Fish(new Transform((position = vec3(0, 4, 0))));
             _fish.animator.start();
             robotArm.fishingRod.bait.children = {
@@ -340,8 +370,64 @@
 
             console.log(robotArm.fishingRod);
             console.log(robotArm.fishingRod.bait);
+            
+            // 성공 결과 표시
+            showFishingResult(true);
+          } else {
+            // 실패 시 미끼만 올라오도록.
+            robotArm.fishingRod.bait.children = {};
+            
+            // 실패 결과 표시
+            showFishingResult(false);
           }
+          
           robotArm.reelingAnimator.start();
+        };
+
+        // 낚시 결과 표시 함수
+        const showFishingResult = (isSuccess) => {
+          const resultDiv = document.getElementById('fishingResult');
+          const resultText = document.getElementById('resultText');
+          const resultDetails = document.getElementById('resultDetails');
+          
+          if (isSuccess) {
+            resultDiv.className = "mt-3 p-2 rounded border bg-green-100 border-green-300";
+            resultText.textContent = "Fishing success!";
+            resultText.className = "font-semibold text-center text-green-700";
+            resultDetails.textContent = "You caught a fish!";
+            resultDetails.className = "text-sm text-center mt-1 text-green-600";
+          } else {
+            resultDiv.className = "mt-3 p-2 rounded border bg-red-100 border-red-300";
+            resultText.textContent = "Fishing failed";
+            resultText.className = "font-semibold text-center text-red-700";
+            resultDetails.textContent = "Try again!";
+            resultDetails.className = "text-sm text-center mt-1 text-red-600";
+          }
+          
+          // 결과 표시
+          resultDiv.classList.remove('hidden');
+          
+          // 5초 후 결과 숨기기
+          setTimeout(() => {
+            resultDiv.classList.add('hidden');
+          }, 5000);
+        };
+
+        // 애니메이션 제어 함수들
+        const stopAllAnimations = () => {
+          rootManager.animationManager.stopAllAnimations();
+          updateAnimationButtons();
+        };
+
+        const resumeAllAnimations = () => {
+          rootManager.animationManager.resumeAllAnimations();
+          updateAnimationButtons();
+        };
+
+        // 버튼 상태 업데이트 함수
+        const updateAnimationButtons = () => {
+          const stopBtn = document.getElementById('stopAllBtn');
+          const resumeBtn = document.getElementById('resumeAllBtn');
         };
 
         const rootManager = new RootManager();
@@ -366,33 +452,33 @@
         const robotArm = new RobotArm();
         rootManager.rootObject.children["robotArm"] = robotArm;
 
-        // 구름
-        for (i = 0; i < 10; i++) {
-          for (j = 0; j < 5; j++) {
+        // 구름(성능 개선을 위해 수 줄임: 10x5 -> 5x3)
+        for (i = 0; i < 5; i++) {
+          for (j = 0; j < 3; j++) {
             rootManager.rootObject.children[`cloud${i}_${j}`] =
               createFigure8FlyCloud(
                 vec3(
-                  -37 + i * 3,
+                  -37 + i * 6, // 간격을 넓혀서 밀도 유지
                   10 + Math.random() * 5,
-                  -40 + Math.random() * 5 + j * 10
+                  -40 + Math.random() * 5 + j * 15 // 간격을 넓혀서 밀도 유지
                 ),
                 vec3(
-                  -45 + i * 3,
+                  -45 + i * 6,
                   10 + Math.random() * 5,
-                  0 + Math.random() * 5 + j * 10
+                  0 + Math.random() * 5 + j * 15
                 )
               );
           }
         }
 
-        // 아파트
-        for (i = 0; i < 3; i++) {
-          for (j = 0; j < 9; j++) {
+        // 아파트(성능 개선을 위해 수 줄임: 3x9 -> 2x5)
+        for (i = 0; i < 2; i++) {
+          for (j = 0; j < 5; j++) {
             rootManager.rootObject.children[`apartment_${i}_${j}`] =
               new Apartment(
                 new Transform({
-                  position: vec3(25 + 10 * i, 5.55, -40 + j * 10),
-                  rotation: vec3(0, -90, 0),
+                  position: vec3(25 + 15 * i, 5.55, -40 + j * 20), // 간격을 넓혀서 밀도 유지
+                  rotation: vec3(0, 0, 0),
                   scale: vec3(5, 5, 5),
                 })
               );
@@ -424,6 +510,26 @@
         // 이미지 텍스처는 initTextures()에서 자동으로 로드됩니다
 
         rootManager.canvasManager.render();
+
+        // 초기 로딩 시 HTML input 값과 canvasManager의 실제 값들을 동기화
+        light_x.value = rootManager.canvasManager.lightPosition[0];
+        light_y.value = rootManager.canvasManager.lightPosition[1];
+        light_z.value = rootManager.canvasManager.lightPosition[2];
+        
+        eye_x.value = rootManager.cameraManager.eye[0];
+        eye_y.value = rootManager.cameraManager.eye[1];
+        eye_z.value = rootManager.cameraManager.eye[2];
+        
+        at_x.value = rootManager.cameraManager.at[0];
+        at_y.value = rootManager.cameraManager.at[1];
+        at_z.value = rootManager.cameraManager.at[2];
+        
+        up_x.value = rootManager.cameraManager.up[0];
+        up_y.value = rootManager.cameraManager.up[1];
+        up_z.value = rootManager.cameraManager.up[2];
+
+        // 초기 애니메이션 버튼 상태 설정
+        updateAnimationButtons();
 
         setLight = (event) => {
           // console.clear();
