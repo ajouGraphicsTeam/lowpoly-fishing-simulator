@@ -58,7 +58,7 @@ class PrimitiveTestScene extends PrefabObject {
         [pyramidPrimitive],
         new Transform({ position: vec3(0, 3, -2) }),
         COLORS.CYAN,
-        TEXTURES.STRIPES_RED_BLUE_V
+        null
         );
 
         // 6. 원기둥 근사 테스트 (앞쪽 왼쪽) - 16각기둥

@@ -35,13 +35,11 @@
         /*
         // 아래처럼 거리 감쇠를 추가하려 했는데, 거리 감쇠 factor trade off때문에 별로였음...
         // 오히려 가운데에 있는 낚시대쪽이 너무 어두워짐.
-
         // 거리 감쇠 계산 추가
         vec3 lightVector = light - pos;
         float distance = length(lightVector);
         vec3 L = normalize(lightVector);
-
-        // 거리 감쇠 팩터 (거리의 제곱에 반비례)
+        // 거리 감쇠 계산식(거리의 제곱에 반비례)
         float attenuation = 1.0 / (1.0 + 0.001 * distance + 0.03 * distance * distance);
         */
 
@@ -336,9 +334,9 @@
           })
         );
 
-        // Primitive 테스트
-        rootManager.rootObject.children["primitiveTestScene"] =
-          new PrimitiveTestScene(new Transform());
+        // // Primitive 테스트
+        // rootManager.rootObject.children["primitiveTestScene"] =
+        //   new PrimitiveTestScene(new Transform());
 
         // 낚시터 (x 양의 방향, y = 0.5)
         rootManager.rootObject.children["fishingGround"] = new FishingGround(

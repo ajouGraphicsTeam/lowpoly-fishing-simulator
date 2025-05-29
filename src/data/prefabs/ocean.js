@@ -9,7 +9,6 @@ class Ocean extends PrefabObject {
         const oceanGridSize = 50; // 각 격자의 크기
         const oceanGridCount = oceanSize / oceanGridSize; // 격자 개수
         
-        // 바다를 격자로 나누어 생성
         const oceanBasePrimitives = [];
         for (let i = 0; i < 2*oceanGridCount; i++) {
             for (let j = 0; j < 2*oceanGridCount; j++) {
