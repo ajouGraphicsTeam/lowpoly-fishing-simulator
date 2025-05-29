@@ -65,6 +65,11 @@ const COLORS = {
         diffuse: vec4(0.5, 0.7, 0.9, 1.0),
         specular: vec4(0.8, 0.9, 1.0, 1.0)
     },
+    SKY_LIGHT_BLUE: {
+        ambient: vec4(3.0, 3.0, 3.0, 1.0),   // 텍스처와 곱해져도 밝게
+        diffuse: vec4(0, 0, 0, 1.0),         
+        specular: vec4(0, 0, 0, 1.0)         
+    },
     LIGHT_DARK_BLUE: {
         ambient: vec4(0.1, 0.2, 0.3, 1.0),
         diffuse: vec4(0.2, 0.4, 0.6, 1.0),

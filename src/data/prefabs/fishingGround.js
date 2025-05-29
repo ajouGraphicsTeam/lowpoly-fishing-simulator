@@ -5,10 +5,9 @@ class FishingGround extends PrefabObject {
 
         // 낚시터 바닥
         const groundSize = 50; // 바닥 크기
-        const groundGridSize = 50; // 각 격자의 크기
+        const groundGridSize = 5; // 각 격자의 크기
         const groundGridCount = groundSize / groundGridSize; // 격자 개수
         
-        // 바닥을 격자로 나누어 생성
         const fishingGroundPrimitives = [];
         for (let i = 0; i < 2*groundGridCount; i++) {
             for (let j = 0; j < 2*groundGridCount; j++) {
@@ -34,15 +33,22 @@ class FishingGround extends PrefabObject {
             TEXTURES.GRASS_TEXTURE // grass.jpg 텍스처 사용
         );
         
-        const fishingGroundSidePrimitive = new QuadPrimitive(
-            vec3(0, 0.5, -groundSize),    
-            vec3(0, -2.0, -groundSize),    
-            vec3(0, -2.0, groundSize),  
-            vec3(0, 0.5, groundSize)  
-        );
+        const fishingGroundSidePrimitives = [];
+        for (let i = 0; i < 2*groundGridCount; i++) {
+            const z1 = -groundSize + i * groundGridSize;
+            const z2 = -groundSize + (i + 1) * groundGridSize;
+            
+            const sidePrimitive = new QuadPrimitive(
+                vec3(0, 0.5, z1),    
+                vec3(0, -2.0, z1),    
+                vec3(0, -2.0, z2),  
+                vec3(0, 0.5, z2)  
+            );
+            fishingGroundSidePrimitives.push(sidePrimitive);
+        }
 
         this.children["fishingGroundSide"] = new HierarchyObject(
-            [fishingGroundSidePrimitive],
+            fishingGroundSidePrimitives,
             new Transform(),
             COLORS.WHITE,
             TEXTURES.GRASS_TEXTURE

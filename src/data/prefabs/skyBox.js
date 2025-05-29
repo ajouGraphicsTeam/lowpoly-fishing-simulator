@@ -32,7 +32,7 @@ class SkyBox extends PrefabObject {
         this.children["skyTop"] = new HierarchyObject(
             [topFace],
             new Transform(),
-            COLORS.LIGHT_BLUE,
+            COLORS.SKY_LIGHT_BLUE,
             //TEXTURES.GRADIENT_BLUE_CYAN_H // 하늘 그라데이션
             skyTexture
         );
@@ -44,7 +44,7 @@ class SkyBox extends PrefabObject {
         this.children["skyBottom"] = new HierarchyObject(
             [bottomFace],
             new Transform(),
-            COLORS.LIGHT_BLUE,
+            COLORS.SKY_LIGHT_BLUE,
             skyTexture
         );
         
@@ -55,7 +55,7 @@ class SkyBox extends PrefabObject {
         this.children["skyFront"] = new HierarchyObject(
             [frontFace],
             new Transform(),
-            COLORS.LIGHT_BLUE,
+            COLORS.SKY_LIGHT_BLUE,
             //TEXTURES.GRADIENT_BLUE_CYAN_H // 하늘 그라데이션
             skyTexture
         );
@@ -67,7 +67,7 @@ class SkyBox extends PrefabObject {
         this.children["skyBack"] = new HierarchyObject(
             [backFace],
             new Transform(),
-            COLORS.LIGHT_BLUE,
+            COLORS.SKY_LIGHT_BLUE,
             //TEXTURES.GRADIENT_BLUE_CYAN_H // 하늘 그라데이션
             skyTexture
         );
@@ -79,7 +79,7 @@ class SkyBox extends PrefabObject {
         this.children["skyLeft"] = new HierarchyObject(
             [leftFace],
             new Transform(),
-            COLORS.LIGHT_BLUE,
+            COLORS.SKY_LIGHT_BLUE,
             //TEXTURES.GRADIENT_BLUE_CYAN_H // 하늘 그라데이션
             skyTexture
         );
@@ -91,7 +91,7 @@ class SkyBox extends PrefabObject {
         this.children["skyRight"] = new HierarchyObject(
             [rightFace],
             new Transform(),
-            COLORS.LIGHT_BLUE,
+            COLORS.SKY_LIGHT_BLUE,
             //TEXTURES.GRADIENT_BLUE_CYAN_H // 하늘 그라데이션
             skyTexture
         );
